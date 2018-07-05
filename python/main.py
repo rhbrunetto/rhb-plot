@@ -1,35 +1,61 @@
-import Tkinter
-import tkMessageBox
-
-top = Tkinter.Tk()
-
-C = Tkinter.Canvas(top, bg="blue", height=250, width=300)
-
-coord = 10, 50, 240, 210
-arc = C.create_arc(coord, start=0, extent=150, fill="red")
-
-C.pack()
-top.mainloop()
-
-# !/usr/bin/python3.5
-# import pysettings
-# import pyforms
-# from   pyforms          import BaseWidget
-# from   pyforms.controls import ControlText
-# from   pyforms.controls import ControlButton
-
-# class SimpleExample1(BaseWidget):
-
-#     def __init__(self):
-#         super(SimpleExample1,self).__init__('Simple example 1')
-
-#         #Definition of the forms fields
-#         self._firstname     = ControlText('First name', 'Default value')
-#         self._middlename    = ControlText('Middle name')
-#         self._lastname      = ControlText('Lastname name')
-#         self._fullname      = ControlText('Full name')
-#         self._button        = ControlButton('Press this button')
+import sys
+from gui import paintzone
+from gui import menubutton
+from gui import window
+import argparse
+import json
+import os
 
 
-# #Execute the application
-# if __name__ == "__main__":   pyforms.start_app( SimpleExample1 )
+def init_components(win, menuroot):
+  menubutton.MenuButton(menuroot, 'Close', win.stop)                    #Close button
+
+def main(config):
+  window_cfg = config['window']
+	
+  win = window.Window()
+	
+  pz = paintzone.PaintZone(    
+      win.root,
+      str(window_cfg['background']),
+      int(window_cfg['altura']),
+      int(window_cfg['largura']))
+  
+  sidebar = Frame(win.root, width=200, bg='white', height=500, relief='sunken', borderwidth=2)
+  sidebar.pack(expand=True, fill='both', side='left', anchor='nw')
+
+  init_components(win)
+
+  win.start()
+
+if __name__ == '__main__':
+  def configuration(path, argparse):
+    """Loads a config file in path"""
+    filepath = os.path.join(os.path.dirname(__file__), path)
+    if os.path.exists(filepath):
+        jsonfile = open(filepath)
+        try:
+            config = json.load(jsonfile)
+            jsonfile.close()
+            return config
+        except Exception as e:
+            message = ('Bad config file at "{}".').format(filepath)
+            raise argparse.ArgumentError(message)
+    else:
+        message = ('Config file "{}" does\'t exists.').format(filepath)
+        raise argparse.ArgumentError(message)
+  
+  """Load argument parser"""
+  arguments_parser = argparse.ArgumentParser(
+      prog=sys.argv[0],
+      description='rhb-plot')
+  arguments_parser.add_argument(
+      '-c', '--config',
+      nargs=1,
+      metavar='<FILE>',
+      default=configuration('config.json', argparse),
+      type=configuration,
+      help=('The rhb-plot configuration file. '
+            'Default: "config.json"'))
+  arguments = arguments_parser.parse_args(sys.argv[1:])
+  main(arguments.config)
