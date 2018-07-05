@@ -154,15 +154,39 @@
 #     cf1.update_width()
 #     root.mainloop()
 
+# import Tkinter as tk
+
+# root = tk.Tk()
+
+# # sidebar
+# sidebar = tk.Frame(root, width=200, bg='white', height=500, relief='sunken', borderwidth=2)
+# sidebar.pack(expand=True, fill='both', side='left', anchor='nw')
+# # main content area
+# mainarea = tk.Frame(root, bg='#CCC', width=500, height=500)
+# mainarea.pack(expand=True, fill='both', side='right')
+
+# root.mainloop()
+
 import Tkinter as tk
 
 root = tk.Tk()
+root.geometry("500x300")
 
-# sidebar
-sidebar = tk.Frame(root, width=200, bg='white', height=500, relief='sunken', borderwidth=2)
-sidebar.pack(expand=True, fill='both', side='left', anchor='nw')
-# main content area
-mainarea = tk.Frame(root, bg='#CCC', width=500, height=500)
-mainarea.pack(expand=True, fill='both', side='right')
+def add():
+    tk.Entry(frame).grid()
+
+def disable():
+    frame.configure(height=frame["height"],width=frame["width"])
+    frame.grid_propagate(0)
+
+def enable():
+    frame.grid_propagate(1)
+
+frame = tk.Frame(root, height=100,width=150,bg="black")
+frame.grid(row=1,column=0)
+
+tk.Button(root, text="add widget", command=add).grid(row=0,column=0)
+tk.Button(root, text="disable propagation", command=disable).grid(row=0,column=1)
+tk.Button(root, text="enable propagation", command=enable).grid(row=0,column=2)
 
 root.mainloop()

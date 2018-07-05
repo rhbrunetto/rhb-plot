@@ -1,30 +1,40 @@
 import sys
 from gui import paintzone
+from gui import sidebar
 from gui import menubutton
 from gui import window
+from transformations import controller as ctrl
 import argparse
 import json
 import os
 
 
-def init_components(win, menuroot):
-  menubutton.MenuButton(menuroot, 'Close', win.stop)                    #Close button
+def init_components(win, menuroot, pz):
+  controller = ctrl.Controller(pz)                                      # Controller to manage the canvas 
+  menubutton.MenuButton(menuroot, 'Line', controller.draw_line)         # Close button
+  menubutton.MenuButton(menuroot, 'Close', win.stop)                    # Close button
+  # menubutton.MenuButton(menuroot, 'Translate', lambda event, pz.current : translation.Translation.apply)                    #Close button
 
 def main(config):
-  window_cfg = config['window']
+  canvas_cfg = config['canvas']
 	
   win = window.Window()
 	
   pz = paintzone.PaintZone(    
       win.root,
-      str(window_cfg['background']),
-      int(window_cfg['altura']),
-      int(window_cfg['largura']))
-  
-  sidebar = Frame(win.root, width=200, bg='white', height=500, relief='sunken', borderwidth=2)
-  sidebar.pack(expand=True, fill='both', side='left', anchor='nw')
+      str(canvas_cfg['background']),
+      int(canvas_cfg['altura']),
+      int(canvas_cfg['largura']),
+      str(canvas_cfg['draw_color']))
 
-  init_components(win)
+  sb = sidebar.SideBar(
+    win.root,
+    int(canvas_cfg['altura'])
+  )
+  
+  pz.set_mouseindicator(sb.frame)
+
+  init_components(win, sb.frame, pz)
 
   win.start()
 

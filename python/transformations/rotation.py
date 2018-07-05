@@ -9,7 +9,7 @@ class Rotation():
   def apply(objeto, angle):
     return np.matmul(Rotation._generate_matrix(angle), objeto.matrix)
 
-# TODO: Implementar a geração da matriz
+# TODO: Implementar a geracao da matriz
   @staticmethod
   def _generate_matrix(angle):
     return Rotation.rotation_mask

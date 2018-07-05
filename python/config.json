@@ -1,7 +1,8 @@
 {
-  "window":{
-    "largura" : 1024,
-    "altura"  : 768,
-    "background":"#FFFFFF"
+  "canvas":{
+    "largura" : 800,
+    "altura"  : 600,
+    "background":"#FFFFFF",
+    "draw_color":"#941414"
   }
 }

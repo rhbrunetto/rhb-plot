@@ -1,1 +1,1 @@
-__all__ = ['paintzone', 'menubutton', 'window']
+__all__ = ['paintzone', 'menubutton', 'window', 'sidebar']
