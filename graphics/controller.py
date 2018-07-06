@@ -15,3 +15,8 @@ class Controller:
   def apply_translation(self):
     # Takes the first object as reference
     tran.Translation.apply(self.focused_objects, self.focused_objects)
+
+  def register_object(self, objeto):
+    list.append(self.drawn_objects, objeto)
+  
+  # def get_objects_in_range(self, 
