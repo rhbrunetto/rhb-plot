@@ -1,1 +1,1 @@
-__all__ = ['janelaviewport', 'rotation', 'scale', 'translation']
+__all__ = ['janelaviewport', 'rotation', 'scale', 'translation', 'controller', 'drawer']

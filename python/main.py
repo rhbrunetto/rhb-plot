@@ -4,19 +4,25 @@ from gui import sidebar
 from gui import menubutton
 from gui import window
 from transformations import controller as ctrl
+from transformations import drawer as drw
 import argparse
 import json
 import os
 
+sys.dont_write_bytecode = True
 
 def init_components(win, menuroot, pz):
-  controller = ctrl.Controller(pz)                                      # Controller to manage the canvas 
-  menubutton.MenuButton(menuroot, 'Line', controller.draw_line)         # Close button
+  controller = ctrl.Controller(pz)                                      # Controller to manage objects 
+  drawer = drw.Drawer(pz)                                               # Controller to manage the canvas 
+  pz.set_drawer(drawer)                                                 # Set drawer to paintzone to notify clicks
+  menubutton.MenuButton(menuroot, 'Line', drawer.draw_line)             # Draw line button
+  menubutton.MenuButton(menuroot, 'Clear', drawer.clear_canvas)         # Clear button
   menubutton.MenuButton(menuroot, 'Close', win.stop)                    # Close button
   # menubutton.MenuButton(menuroot, 'Translate', lambda event, pz.current : translation.Translation.apply)                    #Close button
 
 def main(config):
-  canvas_cfg = config['canvas']
+  canvas_cfg    = config['canvas']
+  side_cfg      = config['sidebar']
 	
   win = window.Window()
 	
@@ -29,7 +35,9 @@ def main(config):
 
   sb = sidebar.SideBar(
     win.root,
-    int(canvas_cfg['altura'])
+    str(side_cfg['background']),
+    int(canvas_cfg['altura']),
+    int(side_cfg['largura'])
   )
   
   pz.set_mouseindicator(sb.frame)

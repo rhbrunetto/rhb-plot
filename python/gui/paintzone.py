@@ -10,10 +10,16 @@ class PaintZone:
     self._color = draw_color
     self._mouseindicator = None                                         # View that tracks cursor position
     self.buffer = []                                                    # Click buffer (stores click position)
+    self.drawer = None                                                  # Drawer to notify clicks
     def click(event):                                                   # Bind click to canvas
       self.draw_point(event.x, event.y)
       list.append(self.buffer, (event.x, event.y))
+      if self.drawer is not None:
+        self.drawer.notify()
     self.canvas.bind('<Button-1>', click)
+
+  def set_drawer(self, drawer):
+    self.drawer = drawer
 
   def set_mouseindicator(self, root):
     self._mouseindicator = mi.MouseIndicator(root)

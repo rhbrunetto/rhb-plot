@@ -2,7 +2,11 @@
   "canvas":{
     "largura" : 800,
     "altura"  : 600,
-    "background":"#FFFFFF",
-    "draw_color":"#941414"
+    "background":"#33353a",
+    "draw_color":"#ffffff"
+  },
+  "sidebar":{
+    "largura" : 150,
+    "background":"#33353a"
   }
 }
