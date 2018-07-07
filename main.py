@@ -1,25 +1,33 @@
 import sys
-from gui import paintzone
-from gui import sidebar
-from gui import menubutton
-from gui import window
-from gui import checkbox
-from graphics import controller as ctrl
-from graphics import drawer as drw
+from modules.gui import paintzone
+from modules.gui import sidebar
+from modules.gui import menubutton
+from modules.gui import window
+from modules.gui import checkbox
+from modules.graphics import controller as ctrl
+from modules.graphics import drawer as drw
 import argparse
 import json
 import os
 
-sys.dont_write_bytecode = True
+# to be used if anything fails
+# ! /usr/bin/python2.7
+# -*- coding: UTF-8 -*-
 
 def init_components(win, menuroot, pz):
-  controller = ctrl.Controller(pz)                                            # Controller to manage objects 
-  drawer = drw.Drawer(pz)                                                     # Controller to manage the canvas 
-  pz.set_drawer(drawer)                                                       # Set drawer to paintzone to notify clicks
-  menubutton.MenuButton(menuroot, 'Line', drawer.draw_line)                   # Draw line button
-  menubutton.MenuButton(menuroot, 'Close', win.stop, side='bottom')           # Close button
-  menubutton.MenuButton(menuroot, 'Clear', drawer.clear_canvas, side='bottom')# Clear button
-  checkbox.CheckBox(menuroot, 'Keep Drawing', drawer.keep_drawing)            # Checkbox to keep drawing
+  controller = ctrl.Controller(pz)                                                              # Controller to manage objects 
+  drawer = drw.Drawer(pz, controller)                                                           # Controller to manage the canvas 
+  pz.set_drawer(drawer)                                                                         # Set drawer to paintzone to notify clicks
+  menubutton.MenuButton(menuroot, 'Line', lambda m=drawer.draw_line: drawer.call_function(m))   # Draw line button
+  menubutton.MenuButton(menuroot, 'Triangle', lambda m=drawer.draw_triangle: drawer.call_function(m))   # Draw triangle button
+  menubutton.MenuButton(menuroot, 'Circle', lambda m=drawer.draw_circle: drawer.call_function(m))   # Draw triangle button
+  menubutton.MenuButton(menuroot, 'Rectangle', lambda m=drawer.draw_rectangle: drawer.call_function(m))   # Draw rectangle button
+  menubutton.MenuButton(menuroot, 'Square', lambda m=drawer.draw_square: drawer.call_function(m))   # Draw square button
+  menubutton.MenuButton(menuroot, 'Delete', lambda m=drawer.delete: drawer.call_function(m))   # Draw square button
+  menubutton.MenuButton(menuroot, 'Close', win.stop, side='bottom')                             # Close button
+  menubutton.MenuButton(menuroot, 'Clear', drawer.clear_canvas, side='bottom')                  # Clear button
+  checkbox.CheckBox(menuroot, 'Keep Drawing', drawer.keep_drawing)                              # Checkbox to keep drawing
+  checkbox.CheckBox(menuroot, 'Draw Clicks', drawer.toggle_point)                               # Checkbox to draw clicks
   # menubutton.MenuButton(menuroot, 'Translate', lambda event, pz.current : translation.Translation.apply)                    #Close button
 
 def main(config):
