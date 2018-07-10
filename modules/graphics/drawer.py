@@ -17,9 +17,10 @@ class Drawer:
     ('draw_line', 2),
     ('draw_circle', 2),
     ('draw_triangle', 3),
-    ('draw_rectangle', 4),
+    ('draw_rectangle', 2),
     ('draw_square', 2),
-    ('delete', 4),
+    ('select', 2),
+    ('delete', 2),
     ('draw_square_bycommandline', 4)
   ])
 
@@ -83,10 +84,10 @@ class Drawer:
 
   def draw_rectangle(self):
     """Draws a rectangle"""
-    pts = self._requirements.get(self.draw_rectangle.__name__)                # Get requirements
+    pts = self._requirements.get(self.draw_rectangle.__name__)                      # Get requirements
     ide = self.paintzone.draw_rectangle(list(sum(self.paintzone.buffer[:pts], ()))) # Draw triangle on canvas
-    self.controller.register_object(self.paintzone.buffer[:pts], ide, 'rectangle') # Register object on controller
-    self.paintzone.buffer = self.paintzone.buffer[pts:]                       # Remove points of buffer
+    self.controller.register_object(self.paintzone.buffer[:pts], ide, 'rectangle')  # Register object on controller
+    self.paintzone.buffer = self.paintzone.buffer[pts:]                             # Remove points of buffer
 
   def draw_circle(self):
     ''"""Draws a circle"""
@@ -127,18 +128,22 @@ class Drawer:
     coord.append(self.paintzone.buffer[0][0]) #y2ray
     coord.append(self.paintzone.buffer[0][1] + bigvar) #y2ray
 
-    ide = self.paintzone.draw_rectangle(coord)                                        # Draw square on canvas
-    self.controller.register_object(coord, ide, 'square')                          # Register object on controller
+    ide = self.paintzone.draw_polygon(coord)                                  # Draw square on canvas
+    self.controller.register_object(coord, ide, 'square')                     # Register object on controller
     self.paintzone.buffer = self.paintzone.buffer[pts:]                       # Remove points of buffer
   
+  def select(self):
+    pts = self._requirements.get(self.select.__name__)                             # Get requirements      
+    self.controller.select(                                                        # Get itens on the selected window
+      self.paintzone.find_to_me(list(sum(self.paintzone.buffer[:pts], ()))))  
+
   # def draw_square_bycommandline(self):
   def delete(self):
-    print ("delete")
-    pts = self._requirements.get(self.delete.__name__)                # Get requirements  
+    pts = self._requirements.get(self.delete.__name__)                          # Get requirements  
     ids = self.paintzone.find_to_me(list(sum(self.paintzone.buffer[:pts], ()))) # Get itens on the selected window
     print ids
     self.paintzone.delete(ids)
-    self.paintzone.buffer = self.paintzone.buffer[pts:]                       # Remove points of buffer
+    self.paintzone.buffer = self.paintzone.buffer[pts:]                         # Remove points of buffer
 
   def clear_canvas(self):
     """Clears the canvas, the paintzone point buffer and the focused function"""

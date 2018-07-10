@@ -13,18 +13,23 @@ from ..data.square import Square
 class Controller:
   """Manages transformations and control objects"""
   def __init__(self, paintzone):
-    self.drawn_objects = []                       # List containing all drawned objects
+    self.drawn_objects = {}                       # Dictionary containing all drawned objects <ide, object>
     self.focused_objects = []                     # List of selected objects
   
   # The following transformations are applied to the focused objects
-  def apply_translation(self):
+  def apply_translation(self, transformation):
     # Takes the first object as reference
     tran.Translation.apply(self.focused_objects, self.focused_objects)
+
+  def select(self, ides):
+    for ide in ides:
+      list.append(self.focused_objects, self.drawn_objects[str(ide)])
 
   def register_object(self, coordinates, ide, objtype, options=None):
     objclass = self._object_types.get(objtype)
     objeto = objclass(coordinates, ide, options)
-    list.append(self.drawn_objects, objeto)
+    self.drawn_objects[str(ide)] = objeto
+    print self.drawn_objects
     # print self.drawn_objects
 
   _object_types = dict([

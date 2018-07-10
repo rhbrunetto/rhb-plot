@@ -20,9 +20,10 @@ def init_components(win, menuroot, pz):
   pz.set_drawer(drawer)                                                                         # Set drawer to paintzone to notify clicks
   menubutton.MenuButton(menuroot, 'Line', lambda m=drawer.draw_line: drawer.call_function(m))   # Draw line button
   menubutton.MenuButton(menuroot, 'Triangle', lambda m=drawer.draw_triangle: drawer.call_function(m))   # Draw triangle button
-  menubutton.MenuButton(menuroot, 'Circle', lambda m=drawer.draw_circle: drawer.call_function(m))   # Draw triangle button
-  menubutton.MenuButton(menuroot, 'Rectangle', lambda m=drawer.draw_rectangle: drawer.call_function(m))   # Draw rectangle button
-  menubutton.MenuButton(menuroot, 'Square', lambda m=drawer.draw_square: drawer.call_function(m))   # Draw square button
+  menubutton.MenuButton(menuroot, 'Circle', lambda m=drawer.draw_circle: drawer.call_function(m))       # Draw triangle button
+  menubutton.MenuButton(menuroot, 'Rectangle', lambda m=drawer.draw_rectangle: drawer.call_function(m)) # Draw rectangle button
+  menubutton.MenuButton(menuroot, 'Square', lambda m=drawer.draw_square: drawer.call_function(m))       # Draw square button
+  menubutton.MenuButton(menuroot, 'Select', lambda m=drawer.select: drawer.call_function(m))       # Draw square button
   menubutton.MenuButton(menuroot, 'Delete', lambda m=drawer.delete: drawer.call_function(m))   # Draw square button
   menubutton.MenuButton(menuroot, 'Close', win.stop, side='bottom')                             # Close button
   menubutton.MenuButton(menuroot, 'Clear', drawer.clear_canvas, side='bottom')                  # Clear button

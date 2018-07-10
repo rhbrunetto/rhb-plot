@@ -6,6 +6,7 @@ class PaintZone:
   
   def __init__(self, root, bgcolor, h, w, draw_color="#000000"):
     self.canvas = Canvas(root, bg=bgcolor, height=h, width=w)           # Canvas view instantiation
+    self.canvas.config(cursor='crosshair')
     self.canvas.pack(expand=True, fill='both', side='right')
     self._color = draw_color
     self._mouseindicator = None                                         # View that tracks cursor position
@@ -34,23 +35,23 @@ class PaintZone:
 
   def draw_point(self, x, y):
     """Draws a point"""
-    self.canvas.create_oval(x-2, y-2, x+2, y+2, fill=self._color, outline="")
+    return self.canvas.create_oval(x-2, y-2, x+2, y+2, fill=self._color, outline="")
 
   def draw_line(self, coord):
     """Draws a line"""
-    self.canvas.create_line(coord, fill=self._color, dash=(4,4))
+    return self.canvas.create_line(coord, fill=self._color, dash=(4,4))
 
   def draw_polygon(self, coord):
     """Draws a polygon"""
-    self.canvas.create_polygon(coord, outline="RED", dash=(4,4))
+    return self.canvas.create_polygon(coord, outline="RED", dash=(4,4))
 
   def draw_rectangle(self, coord):
     """Draws a rectangle"""
-    self.canvas.create_polygon(coord, outline="RED", dash=(4,4))
+    return self.canvas.create_rectangle(coord, outline="RED", dash=(4,4))
 
   def draw_circle(self, coord):
     """Draws a cricle"""
-    self.canvas.create_oval(coord, outline="RED", dash=(4,4))
+    return self.canvas.create_oval(coord, outline="RED", dash=(4,4))
 
   def find_to_me(self, window_coord):
     """Creates a window with specified coordinates and returns the id of overlapped items by the window"""
@@ -61,7 +62,8 @@ class PaintZone:
 
   def delete(self, items):
     """Clear from the canvas the selected items"""
-    self.canvas.delete(items)
+    for item in items:
+      self.canvas.delete(item)
 
   def clear(self):
     """Clear the canvas"""
