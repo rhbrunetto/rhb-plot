@@ -135,7 +135,8 @@ class Drawer:
   def select(self):
     pts = self._requirements.get(self.select.__name__)                             # Get requirements      
     self.controller.select(                                                        # Get itens on the selected window
-      self.paintzone.find_to_me(list(sum(self.paintzone.buffer[:pts], ()))))  
+      self.paintzone.find_to_me(list(sum(self.paintzone.buffer[:pts], ()))),
+      self.paintzone.canvas)
 
   # def draw_square_bycommandline(self):
   def delete(self):

@@ -21,9 +21,10 @@ class Controller:
     # Takes the first object as reference
     tran.Translation.apply(self.focused_objects, self.focused_objects)
 
-  def select(self, ides):
+  def select(self, ides, canvas):
     for ide in ides:
       list.append(self.focused_objects, self.drawn_objects[str(ide)])
+      canvas.itemconfig(ide, outline="blue") # change color
 
   def register_object(self, coordinates, ide, objtype, options=None):
     objclass = self._object_types.get(objtype)
