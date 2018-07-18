@@ -19,8 +19,7 @@ def init_components(win, menuroot, pz):
   controller = ctrl.Controller(pz)                                                              # Controller to manage objects 
   drawer = drw.Drawer(pz, controller)                                                           # Controller to manage the canvas 
   parser = CommandParser(controller, drawer)
-  autocomplete = AutocompleteEntry(parser, win.root)
-  autocomplete.pack()
+  AutocompleteEntry(parser, pz.frame)
 #   autocomplete.grid(row=0, column=0)
   pz.set_drawer(drawer)                                                                         # Set drawer to paintzone to notify clicks
   menubutton.MenuButton(menuroot, 'Line', lambda m=drawer.draw_line: drawer.call_function(m))   # Draw line button

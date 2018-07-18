@@ -5,9 +5,12 @@ class PaintZone:
   """Represents a Paint Zone on graphic interface (canvas)"""
   
   def __init__(self, root, bgcolor, h, w, draw_color="#000000"):
-    self.canvas = Canvas(root, bg=bgcolor, height=h, width=w)           # Canvas view instantiation
+    self.frame = Frame(master=root, width=w)
+    self.frame.pack(expand=True, fill='both', side='right')
+    self.canvas = Canvas(master=self.frame, bg=bgcolor, height=h, width=w)           # Canvas view instantiation
     self.canvas.config(cursor='crosshair')
-    self.canvas.pack(expand=True, fill='both', side='right')
+    self.canvas.propagate(0)
+    self.canvas.pack(expand=True, fill='both')
     self._color = draw_color
     self._mouseindicator = None                                         # View that tracks cursor position
     self.buffer = []                                                    # Click buffer (stores click position)

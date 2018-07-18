@@ -87,9 +87,10 @@ class Drawer:
   def draw_rectangle(self):
     """Draws a rectangle"""
     pts = self._requirements.get(self.draw_rectangle.__name__)                      # Get requirements
-    ide = self.paintzone.draw_rectangle(list(sum(self.paintzone.buffer[:pts], ()))) # Draw triangle on canvas
+    ide = self.paintzone.draw_rectangle(list(sum(self.paintzone.buffer[:pts], ()))) # Draw rectangle on canvas
     self.controller.register_object(self.paintzone.buffer[:pts], ide, 'rectangle')  # Register object on controller
     self.paintzone.buffer = self.paintzone.buffer[pts:]                             # Remove points of buffer
+
 
   def draw_circle(self):
     ''"""Draws a circle"""
@@ -156,30 +157,48 @@ class Drawer:
   
 # COMMAND LINE DRAW FUNCTIONS
 
+  def draw_rectangle_cmd(self):
+    self.paintzone.buffer = self._create_buffer_point(self.paintzone.buffer)
+    return self.draw_rectangle()
+
+  def draw_triangle_cmd(self):
+    self.paintzone.buffer = self._create_buffer_point(self.paintzone.buffer)
+    return self.draw_triangle()
+
+  def draw_line_cmd(self):
+    self.paintzone.buffer = self._create_buffer_point(self.paintzone.buffer)
+    return self.draw_line()
+
   def draw_circle_cmd(self):
     # Requires center and radius
-    center = self.paintzone.buffer[0]
-    p2 = (center[0] + self.paintzone.buffer[1], center[1] + self.paintzone.buffer[1])
-    self.paintzone.buffer[1] = p2
+    start = tuple(self.paintzone.buffer[:2])
+    p2 = (start[0] + self.paintzone.buffer[2], start[1] + self.paintzone.buffer[2])
+    self.paintzone.buffer = [start, p2]
     return self.draw_circle()
     
   def draw_square_cmd(self):
     # Requires point and length
-    start = self.paintzone.buffer[0]
-    print start
-    p2 = (start[0] + self.paintzone.buffer[1], start[1] + self.paintzone.buffer[1])
-    self.paintzone.buffer[1] = p2
-    print self.paintzone.buffer
+    start = tuple(self.paintzone.buffer[:2])
+    p2 = (start[0] + self.paintzone.buffer[2], start[1] + self.paintzone.buffer[2])
+    self.paintzone.buffer = [start, p2]
     return self.draw_square()
 
   def initialize_dict(self):
-    self.cmd_fn['line'] = self.draw_line
+    self.cmd_fn['line'] = self.draw_line_cmd
     self.cmd_fn['circle'] = self.draw_circle_cmd
     self.cmd_fn['square'] = self.draw_square_cmd
-    self.cmd_fn['rectangle'] = self.draw_rectangle
+    self.cmd_fn['triangle'] = self.draw_triangle_cmd
+    self.cmd_fn['rectangle'] = self.draw_rectangle_cmd
 
   def from_cmd_line(self, command, values):
-    print values
     self.paintzone.buffer = map(int, values)
     f = self.cmd_fn.get(command)
     return f()
+
+  def _create_buffer_point(self, coordinates):
+    def group(lst, n):
+      for i in range(0, len(lst), n):
+        val = lst[i:i+n]
+        if len(val) == n:
+          yield tuple(val)
+    return list(group(coordinates, 2))

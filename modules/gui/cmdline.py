@@ -1,21 +1,22 @@
 from Tkinter import *
 import re
+from itertools import chain
 
 class AutocompleteEntry(Entry):
   """Represents the graphic view of command line"""
 
   # List of words that will suggest autocomplete
   lista = [
-    'create',
+    'create rectangle',
+    'create triangle',
+    'create square',
+    'create line',
+    'create circle',
     'select',
     'rotate',
     'translate',
     'scale',
-    'resize',
-    'line',
-    'square',
-    'rectangle',
-    'circle']
+    'resize']
 
   def __init__(self, parser, *args, **kwargs):
       Entry.__init__(self, *args, **kwargs)
@@ -32,7 +33,8 @@ class AutocompleteEntry(Entry):
       self.bind("<Return>", self.execute)
 
       self.lb_up = False
-  
+      self.pack(fill='both', side='bottom')
+   
   def execute(self, event):
     self.parser.parse(self.var.get())
 
@@ -44,7 +46,7 @@ class AutocompleteEntry(Entry):
                 self.lb = Listbox()
                 self.lb.bind("<Double-Button-1>", self.selection)
                 self.lb.bind("<Right>", self.selection)
-                self.lb.place(x=self.winfo_x(), y=self.winfo_y()+self.winfo_height())
+                self.lb.place(x=self.winfo_x() + self.winfo_width(), y=self.winfo_y()-3*self.winfo_height())
                 self.lb_up = True
             
             self.lb.delete(0, END)
@@ -101,11 +103,12 @@ class CommandParser():
   
   # Simple command grammar
   commands = dict([
-    ('create', [r'line (\d+(?:\.\d+)?) (\d+(?:\.\d+)?)',
-                r'square (\d+(?:\.\d+)?) (\d+(?:\.\d+)?)',
-                r'rectangle (\d+(?:\.\d+)?) (\d+(?:\.\d+)?)',
-                r'circle (\d+(?:\.\d+)?) (\d+(?:\.\d+)?)']),
-    ('select',  r'(\d+(?:\.\d+)?) (\d+(?:\.\d+)?)')])
+    ('create', [r'line <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)> <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)>',
+                r'square <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)> (\d+(?:\.\d+)?)',
+                r'rectangle <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)> <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)>',
+                r'triangle <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)> <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)> <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)>',
+                r'circle <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)> (\d+(?:\.\d+)?)']),
+    ('select',  r'<(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)> <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)>')])
 
   def parse(self, command):
     cmd = command.split(' ')[0]
@@ -116,9 +119,8 @@ class CommandParser():
       if not values == []:
         # Call draw functions
         if cmd == 'create':
-          pts = []
-          [pts.append([int(k) for k in list(x)]) for x in values]
-          self.drawer.from_cmd_line(exp.split(' ')[0], pts)
+          
+          self.drawer.from_cmd_line(exp.split(' ')[0], list(chain.from_iterable(values)))
 
 
 # if __name__ == '__main__':
