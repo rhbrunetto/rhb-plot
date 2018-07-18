@@ -11,6 +11,8 @@ class Drawer:
     self.keepDrawing      = False                 # Set draw function as permanent (keeps calling)
     self.controller       = controller            # Set a Controller object, to store drawed objects
     self.showPoint        = False
+    self.cmd_fn = {}
+    self.initialize_dict()
 
   # Defines how many points each object needs to be drawn
   _requirements = dict([
@@ -151,3 +153,33 @@ class Drawer:
     self.paintzone.clear()
     self.paintzone.buffer = []
     self.current_function = None
+  
+# COMMAND LINE DRAW FUNCTIONS
+
+  def draw_circle_cmd(self):
+    # Requires center and radius
+    center = self.paintzone.buffer[0]
+    p2 = (center[0] + self.paintzone.buffer[1], center[1] + self.paintzone.buffer[1])
+    self.paintzone.buffer[1] = p2
+    return self.draw_circle()
+    
+  def draw_square_cmd(self):
+    # Requires point and length
+    start = self.paintzone.buffer[0]
+    print start
+    p2 = (start[0] + self.paintzone.buffer[1], start[1] + self.paintzone.buffer[1])
+    self.paintzone.buffer[1] = p2
+    print self.paintzone.buffer
+    return self.draw_square()
+
+  def initialize_dict(self):
+    self.cmd_fn['line'] = self.draw_line
+    self.cmd_fn['circle'] = self.draw_circle_cmd
+    self.cmd_fn['square'] = self.draw_square_cmd
+    self.cmd_fn['rectangle'] = self.draw_rectangle
+
+  def from_cmd_line(self, command, values):
+    print values
+    self.paintzone.buffer = map(int, values)
+    f = self.cmd_fn.get(command)
+    return f()

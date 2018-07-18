@@ -15,6 +15,10 @@ class Objeto():
     if self.matrix is None: return None
     linha = np.asmatrix(np.ones(np.size(self.matrix, 1)), dtype=int)
     return np.append(self.matrix, linha, axis=0)
+  
+  def get_points(self):
+    """Returns the point sequence to be drawn"""
+    return list(np.array(self.matrix.transpose()).reshape(-1,))
 
   def __repr__(self):
     return str(self.ide)

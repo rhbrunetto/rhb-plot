@@ -6,6 +6,7 @@ from modules.gui import window
 from modules.gui import checkbox
 from modules.graphics import controller as ctrl
 from modules.graphics import drawer as drw
+from modules.gui.cmdline import AutocompleteEntry, CommandParser
 import argparse
 import json
 import os
@@ -17,6 +18,10 @@ import os
 def init_components(win, menuroot, pz):
   controller = ctrl.Controller(pz)                                                              # Controller to manage objects 
   drawer = drw.Drawer(pz, controller)                                                           # Controller to manage the canvas 
+  parser = CommandParser(controller, drawer)
+  autocomplete = AutocompleteEntry(parser, win.root)
+  autocomplete.pack()
+#   autocomplete.grid(row=0, column=0)
   pz.set_drawer(drawer)                                                                         # Set drawer to paintzone to notify clicks
   menubutton.MenuButton(menuroot, 'Line', lambda m=drawer.draw_line: drawer.call_function(m))   # Draw line button
   menubutton.MenuButton(menuroot, 'Triangle', lambda m=drawer.draw_triangle: drawer.call_function(m))   # Draw triangle button
