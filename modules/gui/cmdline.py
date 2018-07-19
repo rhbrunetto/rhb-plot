@@ -34,9 +34,10 @@ class AutocompleteEntry(Entry):
 
       self.lb_up = False
       self.pack(fill='both', side='bottom')
-   
+    
   def execute(self, event):
-    self.parser.parse(self.var.get())
+    if (self.parser.parse(self.var.get())):
+        self.var.set("")
 
   def changed(self, name, index, mode):  
       if not self.var.get() == '':
@@ -119,8 +120,8 @@ class CommandParser():
       if not values == []:
         # Call draw functions
         if cmd == 'create':
-          
           self.drawer.from_cmd_line(exp.split(' ')[0], list(chain.from_iterable(values)))
+          return True
 
 
 # if __name__ == '__main__':
