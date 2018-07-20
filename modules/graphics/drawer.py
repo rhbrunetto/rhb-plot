@@ -105,7 +105,7 @@ class Drawer:
     coord.append(self.paintzone.buffer[0][0] - ray) #y2ray
     coord.append(self.paintzone.buffer[0][1] - ray) #y2ray
     ide = self.paintzone.draw_circle(coord)   # Draw circle on canvas
-    self.controller.register_object(self.paintzone.buffer[0], ide, 'circle', dict([('ray', ray)])) # Register object on controller
+    self.controller.register_object(self._create_buffer_point(coord), ide, 'circle', dict([('ray', ray)])) # Register object on controller
     self.paintzone.buffer = self.paintzone.buffer[pts:]                                       # Remove points of buffer
 
   def draw_square(self):
@@ -132,20 +132,28 @@ class Drawer:
     coord.append(self.paintzone.buffer[0][1] + bigvar) #y2ray
 
     ide = self.paintzone.draw_polygon(coord)                                  # Draw square on canvas
-    self.controller.register_object(coord, ide, 'square')                     # Register object on controller
+    self.controller.register_object(self._create_buffer_point(coord), ide, 'square')                     # Register object on controller
     self.paintzone.buffer = self.paintzone.buffer[pts:]                       # Remove points of buffer
   
   def select(self):
+    """Select (set focus on controller) items overlapped by a rectangle"""
     pts = self._requirements.get(self.select.__name__)                             # Get requirements      
     self.controller.select(                                                        # Get itens on the selected window
       self.paintzone.find_to_me(list(sum(self.paintzone.buffer[:pts], ()))),
       self.paintzone.canvas)
 
+  def unselect(self):
+    """Unselect (remove focus on controller) items overlapped by a rectangle"""
+    pts = self._requirements.get(self.select.__name__)                             # Get requirements      
+    self.controller.unselect(                                                      # Get itens on the selected window
+      self.paintzone.find_to_me(list(sum(self.paintzone.buffer[:pts], ()))),
+      self.paintzone.canvas)
+
   # def draw_square_bycommandline(self):
   def delete(self):
+    """Delete items overlapped by a rectangle"""
     pts = self._requirements.get(self.delete.__name__)                          # Get requirements  
     ids = self.paintzone.find_to_me(list(sum(self.paintzone.buffer[:pts], ()))) # Get itens on the selected window
-    print ids
     self.paintzone.delete(ids)
     self.paintzone.buffer = self.paintzone.buffer[pts:]                         # Remove points of buffer
 
@@ -158,16 +166,29 @@ class Drawer:
 # COMMAND LINE DRAW FUNCTIONS
 
   def draw_rectangle_cmd(self):
+    # Converts values to tuples, buffers it and calls draw function
     self.paintzone.buffer = self._create_buffer_point(self.paintzone.buffer)
     return self.draw_rectangle()
 
   def draw_triangle_cmd(self):
+    # Converts values to tuples, buffers it and calls draw function
     self.paintzone.buffer = self._create_buffer_point(self.paintzone.buffer)
     return self.draw_triangle()
 
   def draw_line_cmd(self):
+    # Converts values to tuples, buffers it and calls draw function
     self.paintzone.buffer = self._create_buffer_point(self.paintzone.buffer)
     return self.draw_line()
+
+  def select_cmd(self):
+    # Converts values to tuples, buffers it and calls select function
+    self.paintzone.buffer = self._create_buffer_point(self.paintzone.buffer)
+    return self.select()
+
+  def unselect_cmd(self):
+    # Converts values to tuples, buffers it and calls unselect function
+    self.paintzone.buffer = self._create_buffer_point(self.paintzone.buffer)
+    return self.unselect()
 
   def draw_circle_cmd(self):
     # Requires center and radius
@@ -184,18 +205,24 @@ class Drawer:
     return self.draw_square()
 
   def initialize_dict(self):
+    """Initializes the name-function map used on command line"""
     self.cmd_fn['line'] = self.draw_line_cmd
     self.cmd_fn['circle'] = self.draw_circle_cmd
     self.cmd_fn['square'] = self.draw_square_cmd
     self.cmd_fn['triangle'] = self.draw_triangle_cmd
     self.cmd_fn['rectangle'] = self.draw_rectangle_cmd
+    self.cmd_fn['select'] = self.select_cmd
+    self.cmd_fn['unselect'] = self.unselect_cmd
+    self.cmd_fn['clear'] = self.clear_canvas
 
   def from_cmd_line(self, command, values):
-    self.paintzone.buffer = map(int, values)
+    """Handles the command and its values"""
+    self.paintzone.buffer = map(int, values) if not values == None else []
     f = self.cmd_fn.get(command)
     return f()
 
   def _create_buffer_point(self, coordinates):
+    """Converts a sequence of values into a list of pairs"""
     def group(lst, n):
       for i in range(0, len(lst), n):
         val = lst[i:i+n]

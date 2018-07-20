@@ -12,7 +12,9 @@ class AutocompleteEntry(Entry):
     'create square',
     'create line',
     'create circle',
+    'clear all',
     'select',
+    'unselect',
     'rotate',
     'translate',
     'scale',
@@ -109,7 +111,9 @@ class CommandParser():
                 r'rectangle <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)> <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)>',
                 r'triangle <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)> <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)> <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)>',
                 r'circle <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)> (\d+(?:\.\d+)?)']),
-    ('select',  r'<(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)> <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)>')])
+    ('select',  [r'<(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)> <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)>']),
+    ('unselect',[r'<(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)> <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)>']),
+    ('clear',   [r'all'])])
 
   def parse(self, command):
     cmd = command.split(' ')[0]
@@ -118,11 +122,19 @@ class CommandParser():
     for exp in expressions:
       values = re.findall(exp, predicate)
       if not values == []:
-        # Call draw functions
+        # Call drawer functions
         if cmd == 'create':
           self.drawer.from_cmd_line(exp.split(' ')[0], list(chain.from_iterable(values)))
           return True
-
+        if cmd == 'select':
+          self.drawer.from_cmd_line(cmd, list(chain.from_iterable(values)))
+          return True
+        if cmd == 'unselect':
+          self.drawer.from_cmd_line(cmd, list(chain.from_iterable(values)))
+          return True
+        if cmd == 'clear':
+          self.drawer.from_cmd_line(cmd, None)
+          return True
 
 # if __name__ == '__main__':
 #     root = Tk()

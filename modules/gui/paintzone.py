@@ -8,6 +8,8 @@ class PaintZone:
     self.frame = Frame(master=root, width=w)
     self.frame.pack(expand=True, fill='both', side='right')
     self.canvas = Canvas(master=self.frame, bg=bgcolor, height=h, width=w)           # Canvas view instantiation
+    self.j_min = (0, 0)
+    self.j_max = (w, h)
     self.canvas.config(cursor='crosshair')
     self.canvas.propagate(0)
     self.canvas.pack(expand=True, fill='both')
@@ -54,6 +56,7 @@ class PaintZone:
 
   def draw_circle(self, coord):
     """Draws a cricle"""
+    print type(coord)
     return self.canvas.create_oval(coord, outline="RED", dash=(4,4))
 
   def find_to_me(self, window_coord):
@@ -62,6 +65,11 @@ class PaintZone:
                                         y1 = window_coord[1],
                                         x2 = window_coord[2],
                                         y2 = window_coord[3])
+
+  def refresh_coordinates(self, ide, coordinates):
+    """Refreshes the coordinates of given element"""
+    self.canvas.coords(ide, *coordinates)
+
 
   def delete(self, items):
     """Clear from the canvas the selected items"""

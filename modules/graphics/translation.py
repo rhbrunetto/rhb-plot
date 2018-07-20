@@ -1,14 +1,14 @@
 import numpy as np
+from transformation import Transformation
 
-class Translation():
+translation_mask = [[1.0, 0, 2],
+                    [0, 1.0, 2],
+                    [0, 0, 1.0]]
+
+class Translation(Transformation):
   """Represents a translation transfomation"""
 
-  translation_mask = []
-
-  @staticmethod
-  def apply(objeto, point):
-    return np.matmul(Translation._generate_matrix(point), objeto.matrix)
-
-  @staticmethod
-  def _generate_matrix(point):
-    return Translation.translation_mask
+  def __init__(self, dx, dy):
+    self.dx = dx
+    self.dy = dy
+    super(Translation, self).__init__(self.generate_matrix(translation_mask, [self.dx, self.dy]))

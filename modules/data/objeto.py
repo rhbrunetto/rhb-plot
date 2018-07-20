@@ -10,6 +10,10 @@ class Objeto():
   def get_matrix(self):
     return self.matrix
 
+  def set_matrix(self, matrix):
+    self.matrix = matrix[:2]   # Without homogeneous coordinates
+    # wait = input("PRESS ENTER TO CONTINUE.")
+
   def build_hmatrix(self):
     """Builds the homogeneous matrix that represents the Object"""
     if self.matrix is None: return None
@@ -18,7 +22,7 @@ class Objeto():
   
   def get_points(self):
     """Returns the point sequence to be drawn"""
-    return list(np.array(self.matrix.transpose()).reshape(-1,))
+    return map(int, list(np.array(self.matrix.transpose()).reshape(-1,)))
 
   def __repr__(self):
     return str(self.ide)
