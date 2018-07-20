@@ -38,8 +38,12 @@ class AutocompleteEntry(Entry):
       self.pack(fill='both', side='bottom')
     
   def execute(self, event):
-    if (self.parser.parse(self.var.get())):
+    success, msg = self.parser.parse(self.var.get())
+    color = self.topbar.config['error_color']
+    if success:
         self.var.set("")
+        color = self.topbar.config['ok_color']
+    self.topbar.update(msg, foreg=color, backg=self.topbar.config['background'])
 
   def changed(self, name, index, mode):  
       if not self.var.get() == '':
@@ -113,6 +117,7 @@ class CommandParser():
                 r'circle <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)> (\d+(?:\.\d+)?)']),
     ('select',  [r'<(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)> <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)>']),
     ('unselect',[r'<(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)> <(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)>']),
+    ('translate', [r'<(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)>']),
     ('clear',   [r'all'])])
 
   def parse(self, command):
@@ -126,16 +131,22 @@ class CommandParser():
         # Call drawer functions
         if cmd == 'create':
           self.drawer.from_cmd_line(exp.split(' ')[0], list(chain.from_iterable(values)))
-          return True
+          return True, "Object created!"
         if cmd == 'select':
           self.drawer.from_cmd_line(cmd, list(chain.from_iterable(values)))
-          return True
+          return True, "Selected objects are in highlight!"
         if cmd == 'unselect':
           self.drawer.from_cmd_line(cmd, list(chain.from_iterable(values)))
-          return True
+          return True, "Objects had been unselected!"
         if cmd == 'clear':
           self.drawer.from_cmd_line(cmd, None)
-          return True
+          return True, "Canvas cleaned!"
+        if cmd == 'translate':
+          self.controller.call_op(cmd, list(chain.from_iterable(values)))
+          return True, "Object translated to point!"
+        return False, "Wrong syntax!!!"
+
+
 
 # if __name__ == '__main__':
 #     root = Tk()

@@ -156,12 +156,16 @@ class Drawer:
     ids = self.paintzone.find_to_me(list(sum(self.paintzone.buffer[:pts], ()))) # Get itens on the selected window
     self.paintzone.delete(ids)
     self.paintzone.buffer = self.paintzone.buffer[pts:]                         # Remove points of buffer
+    self.controller.refresh_min_max()
 
   def clear_canvas(self):
     """Clears the canvas, the paintzone point buffer and the focused function"""
     self.paintzone.clear()
     self.paintzone.buffer = []
     self.current_function = None
+    self.controller.drawn_objects = {}
+    self.controller.focused_objects = []
+    self.controller.refresh_min_max()
   
 # COMMAND LINE DRAW FUNCTIONS
 
@@ -211,6 +215,9 @@ class Drawer:
     self.cmd_fn['square'] = self.draw_square_cmd
     self.cmd_fn['triangle'] = self.draw_triangle_cmd
     self.cmd_fn['rectangle'] = self.draw_rectangle_cmd
+    self.cmd_fn['translate'] = self.select_cmd
+    self.cmd_fn['rotate'] = self.select_cmd
+    self.cmd_fn['scale'] = self.select_cmd
     self.cmd_fn['select'] = self.select_cmd
     self.cmd_fn['unselect'] = self.unselect_cmd
     self.cmd_fn['clear'] = self.clear_canvas

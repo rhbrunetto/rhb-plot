@@ -28,6 +28,7 @@ def init_components(win, menuroot, pz, config):
   menubutton.MenuButton(menuroot, 'Circle', lambda m=drawer.draw_circle: drawer.call_function(m))       # Draw triangle button
   menubutton.MenuButton(menuroot, 'Rectangle', lambda m=drawer.draw_rectangle: drawer.call_function(m)) # Draw rectangle button
   menubutton.MenuButton(menuroot, 'Square', lambda m=drawer.draw_square: drawer.call_function(m))       # Draw square button
+  menubutton.MenuButton(menuroot, 'Zoom-Ext', controller.normalize_window)                              # Applies a window-viewport transformation
   menubutton.MenuButton(menuroot, 'Select', lambda m=drawer.select: drawer.call_function(m))       # Draw square button
   menubutton.MenuButton(menuroot, 'Delete', lambda m=drawer.delete: drawer.call_function(m))   # Draw square button
   menubutton.MenuButton(menuroot, 'Close', win.stop, side='bottom')                             # Close button

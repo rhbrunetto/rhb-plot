@@ -24,13 +24,17 @@ class Controller:
     self.op = None                                # Current operation
     self.v_min = None                             # Drawn viewport minimun
     self.v_max = None                             # Drawn viewport maximum
-  
+
+  def call_op_cmd(self, tname, tvalues):
+    T = self._transformation_names[tname]
+    transf = T(tname, tvalues)
+
   def call_op(self, transformation):
     self.op = transformation
     if self.focused_objects == [] : return
     for obj in self.focused_objects:
       self.op.apply(obj)
-      self.refresh_min_max(obj.get_points())
+      self._refresh_min_max(obj.get_points())
       self.pz.logger("> Transformation " + transformation.__name__ + " applied to object " + obj.ide)
     
   # The following transformations are applied to the focused objects
@@ -47,25 +51,25 @@ class Controller:
     for ide in ides:
       list.append(self.focused_objects, self.drawn_objects[str(ide)])
       canvas.itemconfig(ide, fill="blue") # change color
-      self.pz.logger("> Selected object : " + ide)
+      self.pz.logger("> Selected object : " + str(ide))
 
   def unselect(self, ides, canvas):
     """Removes focus on selected objects"""
     for ide in ides:
       list.remove(self.focused_objects, self.drawn_objects[str(ide)])
       canvas.itemconfig(ide, fill="black") # change color
-      self.pz.logger("> Unselected object : " + ide)
+      self.pz.logger("> Unselected object : " + str(ide))
 
   def register_object(self, coordinates, ide, objtype, options=None):
     """Appends an object to the control list and refreshes controller viewport coordinates"""
     objclass = self._object_types.get(objtype)
     objeto = objclass(ide, coordinates, options)
     self.drawn_objects[str(ide)] = objeto
-    self.refresh_min_max(list(sum(coordinates, ())))
-    self.pz.logger("> New registered object : " + ide)
+    self._refresh_min_max(list(sum(coordinates, ())))
+    self.pz.logger("> New registered object : " + str(ide))
 
 
-  def refresh_min_max(self, coordinates):
+  def _refresh_min_max(self, coordinates):
     """Refreshes minimum and maximum values of controller viewport based on drawn object coordinates.
        If necessary, applies window-viewport transformation"""
     if self.v_max == None or self.v_min == None:
@@ -101,12 +105,15 @@ class Controller:
 
     jv = JanelaViewport(self.v_min, self.v_max, self.pz.j_min, self.pz.j_max)               # Defines a window-viewport transformation
     jv.apply(self.drawn_objects.values())                                                   # Applies to drawn objects
+    self.refresh_min_max()
+      
+  def refresh_min_max(self):
     self.v_max = self.v_min = None
 
     for obj in self.drawn_objects.values():                                                 # Refresh object coordinates in canvas
       self.pz.refresh_coordinates(obj.ide, obj.get_points())
     for obj in self.drawn_objects.values():                                                 # Refresh minimum and maximum values to current viewport
-      self.refresh_min_max(obj.get_points())
+      self._refresh_min_max(obj.get_points())
 
   # Maps an object name and its class
   _object_types = dict([
@@ -115,4 +122,12 @@ class Controller:
     ('rectangle', Polygon),
     ('circle', Circle),
     ('triangle', Triangle)    
+  ])
+
+  # Maps an transformation command and its class
+  _transformation_names = dict([
+    ('translate', Translation),
+    ('rotate', Rotation),
+    ('scale', Scale),
+    ('winvport', JanelaViewport)
   ])

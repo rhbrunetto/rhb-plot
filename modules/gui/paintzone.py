@@ -47,22 +47,22 @@ class PaintZone:
 
   def draw_line(self, coord):
     """Draws a line"""
-    self.logger("> Line drawn : " + coord)
+    self.logger("> Line drawn : " + str(coord))
     return self.canvas.create_line(coord, fill=self._color, dash=(4,4))
 
   def draw_polygon(self, coord):
     """Draws a polygon"""
-    self.logger("> Polygon drawn : " + coord)
+    self.logger("> Polygon drawn : " + str(coord))
     return self.canvas.create_polygon(coord, outline="RED", dash=(4,4))
 
   def draw_rectangle(self, coord):
     """Draws a rectangle"""
-    self.logger("> Rectangle drawn : " + coord)
+    self.logger("> Rectangle drawn : " + str(coord))
     return self.canvas.create_rectangle(coord, outline="RED", dash=(4,4))
 
   def draw_circle(self, coord):
     """Draws a cricle"""
-    self.logger("> Circle drawn : " + coord)
+    self.logger("> Circle drawn : " + str(coord))
     return self.canvas.create_oval(coord, outline="RED", dash=(4,4))
 
   def find_to_me(self, window_coord):
