@@ -5,7 +5,6 @@ import janelaviewport as jvp
 import translation as tran
 import rotation as rot
 import scale
-import Queue
 from ..data.line import Line
 from ..data.circle import Circle
 from ..data.polygon import Polygon
@@ -22,26 +21,40 @@ class Controller:
     self.drawn_objects = {}                       # Dictionary containing all drawned objects <ide, object>
     self.focused_objects = []                     # List of selected objects
     self.pz = paintzone                           # Paintzone object
+    self.op = None                                # Current operation
     self.v_min = None                             # Drawn viewport minimun
     self.v_max = None                             # Drawn viewport maximum
   
+  def call_op(self, transformation):
+    self.op = transformation
+    if self.focused_objects == [] : return
+    for obj in self.focused_objects:
+      self.op.apply(obj)
+      self.refresh_min_max(obj.get_points())
+      self.pz.logger("> Transformation " + transformation.__name__ + " applied to object " + obj.ide)
+    
   # The following transformations are applied to the focused objects
-  def apply_translation(self, transformation):
-    """Applies a transformation in focused object list"""
-    # Takes the first object as reference
-    tran.Translation.apply(self.focused_objects, self.focused_objects)
+  # def apply_translation(self):
+  #   """Applies a transformation in focused object list"""
+  #   # Takes the first object as reference
+  #   tran.Translation.apply(self.focused_objects, self.focused_objects)
+
+  # def init_transformation(self, transformation):
+  #     self.op = transformation()
 
   def select(self, ides, canvas):
     """Sets focus on selected objects"""
     for ide in ides:
       list.append(self.focused_objects, self.drawn_objects[str(ide)])
       canvas.itemconfig(ide, fill="blue") # change color
+      self.pz.logger("> Selected object : " + ide)
 
   def unselect(self, ides, canvas):
     """Removes focus on selected objects"""
     for ide in ides:
       list.remove(self.focused_objects, self.drawn_objects[str(ide)])
       canvas.itemconfig(ide, fill="black") # change color
+      self.pz.logger("> Unselected object : " + ide)
 
   def register_object(self, coordinates, ide, objtype, options=None):
     """Appends an object to the control list and refreshes controller viewport coordinates"""
@@ -49,6 +62,8 @@ class Controller:
     objeto = objclass(ide, coordinates, options)
     self.drawn_objects[str(ide)] = objeto
     self.refresh_min_max(list(sum(coordinates, ())))
+    self.pz.logger("> New registered object : " + ide)
+
 
   def refresh_min_max(self, coordinates):
     """Refreshes minimum and maximum values of controller viewport based on drawn object coordinates.

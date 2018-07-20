@@ -8,5 +8,11 @@
   "sidebar":{
     "largura" : 150,
     "background":"#33353a"
+  },
+  "topbar":{
+    "error_color":  "#C70039",
+    "normal_color": "#000000",
+    "ok_color":     "#145a32",
+    "background":   "#797b80"
   }
 }

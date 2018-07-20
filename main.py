@@ -4,6 +4,7 @@ from modules.gui import sidebar
 from modules.gui import menubutton
 from modules.gui import window
 from modules.gui import checkbox
+from modules.gui import topbar
 from modules.graphics import controller as ctrl
 from modules.graphics import drawer as drw
 from modules.gui.cmdline import AutocompleteEntry, CommandParser
@@ -15,12 +16,12 @@ import os
 # ! /usr/bin/python2.7
 # -*- coding: UTF-8 -*-
 
-def init_components(win, menuroot, pz):
+def init_components(win, menuroot, pz, config):
   controller = ctrl.Controller(pz)                                                              # Controller to manage objects 
   drawer = drw.Drawer(pz, controller)                                                           # Controller to manage the canvas 
   parser = CommandParser(controller, drawer)
-  AutocompleteEntry(parser, pz.frame)
-#   autocomplete.grid(row=0, column=0)
+  topbar.TopBar(pz.frame, config)
+  AutocompleteEntry(parser, topbar, pz.subframe)
   pz.set_drawer(drawer)                                                                         # Set drawer to paintzone to notify clicks
   menubutton.MenuButton(menuroot, 'Line', lambda m=drawer.draw_line: drawer.call_function(m))   # Draw line button
   menubutton.MenuButton(menuroot, 'Triangle', lambda m=drawer.draw_triangle: drawer.call_function(m))   # Draw triangle button
@@ -38,6 +39,7 @@ def init_components(win, menuroot, pz):
 def main(config):
   canvas_cfg    = config['canvas']
   side_cfg      = config['sidebar']
+  top_cfg       = config['topbar']
 	
   win = window.Window()
 	
@@ -57,7 +59,7 @@ def main(config):
   
   pz.set_mouseindicator(sb.frame)
 
-  init_components(win, sb.frame, pz)
+  init_components(win, sb.frame, pz, top_cfg)
 
   win.start()
 

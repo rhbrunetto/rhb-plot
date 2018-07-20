@@ -5,15 +5,18 @@ class PaintZone:
   """Represents a Paint Zone on graphic interface (canvas)"""
   
   def __init__(self, root, bgcolor, h, w, draw_color="#000000"):
-    self.frame = Frame(master=root, width=w)
+    self.frame = Frame(master=root, width=w)                                    # External frame
     self.frame.pack(expand=True, fill='both', side='right')
-    self.canvas = Canvas(master=self.frame, bg=bgcolor, height=h, width=w)           # Canvas view instantiation
-    self.j_min = (0, 0)
-    self.j_max = (w, h)
+    self.subframe = Frame(master=self.frame, width=w)                           # Internal frame
+    self.subframe.pack(expand=True, fill='both', side='bottom')
+    self.canvas = Canvas(master=self.subframe, bg=bgcolor, height=h, width=w)   # Canvas view instantiation
     self.canvas.config(cursor='crosshair')
     self.canvas.propagate(0)
     self.canvas.pack(expand=True, fill='both')
-    self._color = draw_color
+    self.log = []
+    self.j_min = (0, 0)                                                 # Viewport minimum coordinates
+    self.j_max = (w, h)                                                 # Viewport maximum coordinates
+    self._color = draw_color                                            # Draw color
     self._mouseindicator = None                                         # View that tracks cursor position
     self.buffer = []                                                    # Click buffer (stores click position)
     self.drawer = None                                                  # Drawer to notify clicks    
@@ -22,7 +25,7 @@ class PaintZone:
       if self.drawer is not None:
         self.drawer.notify()                        # Notify drawer, if it has been setted
         if self.drawer.showPoint :
-          self.draw_point(event.x, event.y)             # Draws the point on canvas
+          self.draw_point(event.x, event.y)         # Draws the point on canvas
     self.canvas.bind('<Button-1>', click)
 
   def set_drawer(self, drawer):
@@ -44,19 +47,22 @@ class PaintZone:
 
   def draw_line(self, coord):
     """Draws a line"""
+    self.logger("> Line drawn : " + coord)
     return self.canvas.create_line(coord, fill=self._color, dash=(4,4))
 
   def draw_polygon(self, coord):
     """Draws a polygon"""
+    self.logger("> Polygon drawn : " + coord)
     return self.canvas.create_polygon(coord, outline="RED", dash=(4,4))
 
   def draw_rectangle(self, coord):
     """Draws a rectangle"""
+    self.logger("> Rectangle drawn : " + coord)
     return self.canvas.create_rectangle(coord, outline="RED", dash=(4,4))
 
   def draw_circle(self, coord):
     """Draws a cricle"""
-    print type(coord)
+    self.logger("> Circle drawn : " + coord)
     return self.canvas.create_oval(coord, outline="RED", dash=(4,4))
 
   def find_to_me(self, window_coord):
@@ -79,3 +85,6 @@ class PaintZone:
   def clear(self):
     """Clear the canvas"""
     self.canvas.delete("all")
+
+  def logger(self, text):
+    self.log.append(text)

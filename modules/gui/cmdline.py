@@ -20,14 +20,14 @@ class AutocompleteEntry(Entry):
     'scale',
     'resize']
 
-  def __init__(self, parser, *args, **kwargs):
+  def __init__(self, parser, topbar, *args, **kwargs):
       Entry.__init__(self, *args, **kwargs)
       self.parser = parser
-      # self.lista = AutocompleteEntry.lista        
       self.var = self["textvariable"]
       if self.var == '':
           self.var = self["textvariable"] = StringVar()
 
+      self.topbar = topbar
       self.var.trace('w', self.changed)
       self.bind("<Right>", self.selection)
       self.bind("<Up>", self.up)
@@ -116,6 +116,7 @@ class CommandParser():
     ('clear',   [r'all'])])
 
   def parse(self, command):
+    """Parses an input, splitting and executing command"""
     cmd = command.split(' ')[0]
     predicate = command.replace(cmd + ' ', '')
     expressions = self.commands.get(cmd)
