@@ -12,7 +12,6 @@ class Objeto():
 
   def set_matrix(self, matrix):
     self.matrix = matrix[:2]   # Without homogeneous coordinates
-    # wait = input("PRESS ENTER TO CONTINUE.")
 
   def build_hmatrix(self):
     """Builds the homogeneous matrix that represents the Object"""
@@ -25,4 +24,4 @@ class Objeto():
     return map(int, list(np.array(self.matrix.transpose()).reshape(-1,)))
 
   def __repr__(self):
-    return str(self.ide)
+    return str(self.matrix)

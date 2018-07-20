@@ -36,24 +36,19 @@ class Controller:
     for ide in ides:
       list.append(self.focused_objects, self.drawn_objects[str(ide)])
       canvas.itemconfig(ide, fill="blue") # change color
-    print self.focused_objects
 
   def unselect(self, ides, canvas):
     """Removes focus on selected objects"""
     for ide in ides:
       list.remove(self.focused_objects, self.drawn_objects[str(ide)])
       canvas.itemconfig(ide, fill="black") # change color
-    print self.focused_objects
 
   def register_object(self, coordinates, ide, objtype, options=None):
     """Appends an object to the control list and refreshes controller viewport coordinates"""
     objclass = self._object_types.get(objtype)
     objeto = objclass(ide, coordinates, options)
-    print coordinates
     self.drawn_objects[str(ide)] = objeto
-    print self.drawn_objects
     self.refresh_min_max(list(sum(coordinates, ())))
-    # print self.drawn_objects
 
   def refresh_min_max(self, coordinates):
     """Refreshes minimum and maximum values of controller viewport based on drawn object coordinates.
@@ -66,39 +61,37 @@ class Controller:
       xmax = self.v_max[0]
       ymin = self.v_min[1]
       ymax = self.v_max[1]
+
     for i in range(len(coordinates)):
       if i % 2 == 0:  # x
         if coordinates[i] < xmin: xmin = coordinates[i]
         if coordinates[i] > xmax: xmax = coordinates[i]
-      else:
+      else:           # y
         if coordinates[i] < ymin: ymin = coordinates[i]
         if coordinates[i] > ymax: ymax = coordinates[i]
-    # xmin = min(lis,key=lambda item:item[0])[0]
-    # xmax = max(lis,key=lambda item:item[0])[0]
-    # ymin = min(lis,key=lambda item:item[1])[1]
-    # ymax = min(lis,key=lambda item:item[1])[1]
-
+    
     self.v_max = (xmax, ymax)
     self.v_min = (xmin, ymin)
-
-    print self.v_max
-    print self.v_min
 
     if xmax > self.pz.j_max[0] or ymax > self.pz.j_max[1] or xmin < self.pz.j_min[0] or ymin < self.pz.j_min[1]:
        self.normalize_window()
 
   def normalize_window(self):
     """Applies a window-viewport transformation on all drawn objects and refreshes controller viewport coordinates"""
-    jv = JanelaViewport(self.v_min, self.v_max,
-                        self.pz.j_min, self.pz.j_max)
+    deltay = abs(self.v_max[1] - self.v_min[1])
+    deltax = abs(self.v_max[0] - self.v_min[0])
+    percentage = 0.05                                                                       # Margin
+    self.v_min = (self.v_min[0] - percentage*deltax, self.v_min[1] - percentage*deltay)     # Add a margin
+    self.v_max = (self.v_max[0] + percentage*deltax, self.v_max[1] + percentage*deltay)     # Add a margin
 
-    jv.apply(self.drawn_objects.values())
-    print "Applied"
-    self.v_max = None
-    self.v_min = None
-    for obj in self.drawn_objects.values():
-      # self.refresh_min_max(obj.get_points())
+    jv = JanelaViewport(self.v_min, self.v_max, self.pz.j_min, self.pz.j_max)               # Defines a window-viewport transformation
+    jv.apply(self.drawn_objects.values())                                                   # Applies to drawn objects
+    self.v_max = self.v_min = None
+
+    for obj in self.drawn_objects.values():                                                 # Refresh object coordinates in canvas
       self.pz.refresh_coordinates(obj.ide, obj.get_points())
+    for obj in self.drawn_objects.values():                                                 # Refresh minimum and maximum values to current viewport
+      self.refresh_min_max(obj.get_points())
 
   # Maps an object name and its class
   _object_types = dict([
