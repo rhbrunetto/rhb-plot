@@ -43,7 +43,7 @@ class AutocompleteEntry(Entry):
     if success:
         self.var.set("")
         color = self.topbar.config['ok_color']
-    self.topbar.update(msg, foreg=color, backg=self.topbar.config['background'])
+    self.topbar.update(msg, backg=color, foreg=self.topbar.config['background'])
 
   def changed(self, name, index, mode):  
       if not self.var.get() == '':
@@ -125,6 +125,7 @@ class CommandParser():
     cmd = command.split(' ')[0]
     predicate = command.replace(cmd + ' ', '')
     expressions = self.commands.get(cmd)
+    if expressions == None: return False, "Wrong syntax!!!"
     for exp in expressions:
       values = re.findall(exp, predicate)
       if not values == []:
@@ -142,7 +143,7 @@ class CommandParser():
           self.drawer.from_cmd_line(cmd, None)
           return True, "Canvas cleaned!"
         if cmd == 'translate':
-          self.controller.call_op(cmd, list(chain.from_iterable(values)))
+          self.controller.call_op_cmd(cmd, map(int, list(chain.from_iterable(values))))
           return True, "Object translated to point!"
         return False, "Wrong syntax!!!"
 

@@ -27,7 +27,10 @@ class Controller:
 
   def call_op_cmd(self, tname, tvalues):
     T = self._transformation_names[tname]
-    transf = T(tname, tvalues)
+    transf = T(*tvalues)
+    for obj in self.focused_objects:
+      transf.apply(obj)
+    self.refresh_min_max(self.focused_objects)
 
   def call_op(self, transformation):
     self.op = transformation
@@ -105,14 +108,14 @@ class Controller:
 
     jv = JanelaViewport(self.v_min, self.v_max, self.pz.j_min, self.pz.j_max)               # Defines a window-viewport transformation
     jv.apply(self.drawn_objects.values())                                                   # Applies to drawn objects
-    self.refresh_min_max()
+    self.refresh_min_max(self.drawn_objects.values())
       
-  def refresh_min_max(self):
+  def refresh_min_max(self, obj_list):
+    """Refreshes all objects coordinates on screen and, if necessary, applies a window-viewport transformation"""
     self.v_max = self.v_min = None
-
-    for obj in self.drawn_objects.values():                                                 # Refresh object coordinates in canvas
+    for obj in obj_list:                                                 # Refresh object coordinates in canvas
       self.pz.refresh_coordinates(obj.ide, obj.get_points())
-    for obj in self.drawn_objects.values():                                                 # Refresh minimum and maximum values to current viewport
+    for obj in obj_list:                                                 # Refresh minimum and maximum values to current viewport
       self._refresh_min_max(obj.get_points())
 
   # Maps an object name and its class

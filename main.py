@@ -20,8 +20,8 @@ def init_components(win, menuroot, pz, config):
   controller = ctrl.Controller(pz)                                                              # Controller to manage objects 
   drawer = drw.Drawer(pz, controller)                                                           # Controller to manage the canvas 
   parser = CommandParser(controller, drawer)
-  topbar.TopBar(pz.frame, config)
-  AutocompleteEntry(parser, topbar, pz.subframe)
+  tbar = topbar.TopBar(pz.frame, config)
+  AutocompleteEntry(parser, tbar, pz.subframe)
   pz.set_drawer(drawer)                                                                         # Set drawer to paintzone to notify clicks
   menubutton.MenuButton(menuroot, 'Line', lambda m=drawer.draw_line: drawer.call_function(m))   # Draw line button
   menubutton.MenuButton(menuroot, 'Triangle', lambda m=drawer.draw_triangle: drawer.call_function(m))   # Draw triangle button
