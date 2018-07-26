@@ -22,6 +22,7 @@ class Drawer:
     ('draw_rectangle', 2),
     ('draw_square', 2),
     ('select', 2),
+    ('unselect', 2),
     ('delete', 2),
     ('draw_square_bycommandline', 4)
   ])

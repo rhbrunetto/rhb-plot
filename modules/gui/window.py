@@ -5,6 +5,7 @@ class Window:
   
   def __init__(self):
     self.root = Tk()
+    self.root.title("rhb-plot")
     self.root.resizable(width=False, height=False)
 
   def start(self):

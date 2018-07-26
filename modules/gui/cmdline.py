@@ -21,7 +21,8 @@ class AutocompleteEntry(Entry):
     (r'.*rotate .*', 'rotate angle <x1,y1>'),
     (r'.*scale .*', 'scale sx sy <x1,y1>'),
     (r'.*clear all.*', 'clear all'),
-    (r'.*zoom-ext.*', 'zoom-ext')])
+    (r'.*zoom-ext.*', 'zoom-ext'),
+    (r'.*load.*', 'load file_path')])
 
   def __init__(self, parser, topbar, *args, **kwargs):
       Entry.__init__(self, *args, **kwargs)
@@ -133,6 +134,7 @@ class CommandParser():
     ('rotate',    [r'([+-]?\d+(?:\.\d+)?) <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)>']),
     ('scale',     [r'([+-]?\d+(?:\.\d+)?) ([+-]?\d+(?:\.\d+)?) <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)>']),
     ('clear',     [r'all']),
+    ('load',      [r'.*']),
     ('zoom-ext',  [r'.*'])])
 
   def parse(self, command):
@@ -171,6 +173,19 @@ class CommandParser():
         if cmd == 'zoom':
           self.controller.call_op_cmd(cmd, self.drawer.create_buffer_point(map(float, val_list)))
           return True, "Transformation applied: " + cmd + "!"
+        if cmd == 'load':
+          print values[0]
+          fname =  values[0]
+          try:
+            with open(fname) as f:
+                content = f.readlines()
+            content = [x.strip() for x in content] 
+            for command in content:
+              print command
+              self.parse(command)
+            return True, "File loaded!"
+          except:
+            return False, "File not found!"
         return False, "Wrong syntax!!!"
       # return False, "Wrong syntax!!!"
 

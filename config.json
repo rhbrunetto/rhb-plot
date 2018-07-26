@@ -8,7 +8,10 @@
   },
   "sidebar":{
     "largura" : 150,
-    "background":"#33353a"
+    "background":"#33353a",
+    "object_c":"#ccffcc",
+    "transf_c":"#ffffcc",
+    "func_c":"#ccffff"
   },
   "topbar":{
     "error_color":  "#C70039",

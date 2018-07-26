@@ -54,7 +54,7 @@ class PaintZone:
 
   def draw_polygon(self, coord):
     """Draws a polygon"""
-    print "> Polygon drawn : " + str(coord)
+    self.logger("> Polygon drawn : " + str(coord))
     return self.canvas.create_polygon(coord, outline=self.color, fill='')
 
   def draw_rectangle(self, coord):

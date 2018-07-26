@@ -17,25 +17,26 @@ import os
 # ! /usr/bin/python2.7
 # -*- coding: UTF-8 -*-
 
-def init_components(win, menuroot, pz, config):
+def init_components(win, menuroot, pz, config, sbconfig):
   tbar = topbar.TopBar(pz.frame, config)
   controller = ctrl.Controller(pz, tbar)                                                              # Controller to manage objects 
   drawer = drw.Drawer(pz, controller)                                                           # Controller to manage the canvas 
   parser = CommandParser(controller, drawer)
   AutocompleteEntry(parser, tbar, pz.subframe)
   pz.set_drawer(drawer)                                                                         # Set drawer to paintzone to notify clicks
-  menubutton.MenuButton(menuroot, 'Line', lambda m=drawer.draw_line: drawer.call_function(m))   # Draw line button
-  menubutton.MenuButton(menuroot, 'Triangle', lambda m=drawer.draw_triangle: drawer.call_function(m))   # Draw triangle button
-  menubutton.MenuButton(menuroot, 'Circle', lambda m=drawer.draw_circle: drawer.call_function(m))       # Draw triangle button
-  menubutton.MenuButton(menuroot, 'Rectangle', lambda m=drawer.draw_rectangle: drawer.call_function(m)) # Draw rectangle button
-  menubutton.MenuButton(menuroot, 'Square', lambda m=drawer.draw_square: drawer.call_function(m))       # Draw square button
-  menubutton.MenuButton(menuroot, 'Zoom-Ext', controller.normalize_window)                              # Applies a window-viewport transformation
-  menubutton.MenuButton(menuroot, 'Select', lambda m=drawer.select: drawer.call_function(m))       # Draw square button
-  menubutton.MenuButton(menuroot, 'Delete', lambda m=drawer.delete: drawer.call_function(m))   # Draw square button
-  menubutton.MenuButton(menuroot, 'Rotate', lambda m='rotate': controller.call_op(m))       # Draw square button
-  menubutton.MenuButton(menuroot, 'Translate', lambda m='translate': controller.call_op(m))       # Draw square button
-  menubutton.MenuButton(menuroot, 'Scale', lambda m='scale': controller.call_op(m))       # Draw square button
-  menubutton.MenuButton(menuroot, 'Zoom', lambda m='zoom': controller.call_op(m))       # Draw square button
+  menubutton.MenuButton(menuroot, 'Line', lambda m=drawer.draw_line: drawer.call_function(m), bgcolor=sbconfig['object_c'])   # Draw line button
+  menubutton.MenuButton(menuroot, 'Triangle', lambda m=drawer.draw_triangle: drawer.call_function(m), bgcolor=sbconfig['object_c'])   # Draw triangle button
+  menubutton.MenuButton(menuroot, 'Circle', lambda m=drawer.draw_circle: drawer.call_function(m), bgcolor=sbconfig['object_c'])       # Draw triangle button
+  menubutton.MenuButton(menuroot, 'Rectangle', lambda m=drawer.draw_rectangle: drawer.call_function(m), bgcolor=sbconfig['object_c']) # Draw rectangle button
+  menubutton.MenuButton(menuroot, 'Square', lambda m=drawer.draw_square: drawer.call_function(m), bgcolor=sbconfig['object_c'])       # Draw square button
+  menubutton.MenuButton(menuroot, 'Select', lambda m=drawer.select: drawer.call_function(m), bgcolor=sbconfig['func_c'])       # Draw square button
+  menubutton.MenuButton(menuroot, 'Unselect', lambda m=drawer.unselect: drawer.call_function(m), bgcolor=sbconfig['func_c'])       # Draw square button
+  menubutton.MenuButton(menuroot, 'Delete', lambda m=drawer.delete: drawer.call_function(m), )   # Draw square button
+  menubutton.MenuButton(menuroot, 'Zoom-Ext', controller.normalize_window, bgcolor=sbconfig['transf_c'])                              # Applies a window-viewport transformation
+  menubutton.MenuButton(menuroot, 'Rotate', lambda m='rotate': controller.call_op(m), bgcolor=sbconfig['transf_c'])       # Draw square button
+  menubutton.MenuButton(menuroot, 'Translate', lambda m='translate': controller.call_op(m), bgcolor=sbconfig['transf_c'])       # Draw square button
+  menubutton.MenuButton(menuroot, 'Scale', lambda m='scale': controller.call_op(m), bgcolor=sbconfig['transf_c'])       # Draw square button
+  menubutton.MenuButton(menuroot, 'Zoom', lambda m='zoom': controller.call_op(m), bgcolor=sbconfig['transf_c'])       # Draw square button
   menubutton.MenuButton(menuroot, 'Close', win.stop, side='bottom')                             # Close button
   menubutton.MenuButton(menuroot, 'Clear', drawer.clear_canvas, side='bottom')                  # Clear button
   checkbox.CheckBox(menuroot, 'Keep Drawing', drawer.keep_drawing)                              # Checkbox to keep drawing
@@ -67,7 +68,7 @@ def main(config):
   
   pz.set_mouseindicator(sb.frame)
 
-  init_components(win, sb.frame, pz, top_cfg)
+  init_components(win, sb.frame, pz, top_cfg, side_cfg)
 
   win.start()
 
