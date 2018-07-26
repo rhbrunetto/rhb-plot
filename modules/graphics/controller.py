@@ -26,6 +26,9 @@ class Controller:
     self.v_max = None                             # Drawn viewport maximum
 
   def call_op_cmd(self, tname, tvalues):
+    if tname == 'zoom-ext':
+      self.normalize_window()
+      return
     T = self._transformation_names[tname]
     transf = T(*tvalues)
     for obj in self.focused_objects:
@@ -100,6 +103,7 @@ class Controller:
 
   def normalize_window(self):
     """Applies a window-viewport transformation on all drawn objects and refreshes controller viewport coordinates"""
+    if self.v_max == None or self.v_min == None: return
     deltay = abs(self.v_max[1] - self.v_min[1])
     deltax = abs(self.v_max[0] - self.v_min[0])
     percentage = 0.05                                                                       # Margin
@@ -132,5 +136,4 @@ class Controller:
     ('translate', Translation),
     ('rotate', Rotation),
     ('scale', Scale),
-    ('winvport', JanelaViewport)
   ])

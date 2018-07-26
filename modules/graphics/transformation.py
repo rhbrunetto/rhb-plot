@@ -7,15 +7,9 @@ class Transformation(object):
 
   def apply(self, objeto):
     """Applies the transformation in a object"""
-    print "applying translation"
-    print objeto.matrix
-    print self.matrix
     result = np.matmul(self.matrix, objeto.build_hmatrix())           # Multiply transformation matrix and object matrix (homogeneous coordinate)
-    print result
     final_matrix = self.check_homogeneous(result)                     # Check the homogeneous coordinates (all must be zero) / normalizes matrix
     objeto.set_matrix(final_matrix)                                   # Apply changes to object
-    print "applied:"
-    print final_matrix
 
   def check_homogeneous(self, matrix):
     """Checks all homogeneous coordinates and, if necessary, normalizes the columns"""

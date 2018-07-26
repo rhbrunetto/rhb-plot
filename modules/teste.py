@@ -125,8 +125,6 @@
 
 # jv.apply([o])
 
-# print o.matrix
-
 
 from Tkinter import *
 
