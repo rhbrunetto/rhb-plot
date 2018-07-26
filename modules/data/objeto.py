@@ -25,3 +25,6 @@ class Objeto():
 
   def __repr__(self):
     return str(self.matrix)
+
+  def __eq__(self, other):
+        return self.ide == other.ide

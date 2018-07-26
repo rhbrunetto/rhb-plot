@@ -1,15 +1,12 @@
 from Tkinter import *
 from numpy import NINF as NINFINITE
 from numpy import inf as INFINITE
-import janelaviewport as jvp
-import translation as tran
-import rotation as rot
-import scale
 from ..data.line import Line
 from ..data.circle import Circle
 from ..data.polygon import Polygon
 from ..data.triangle import Triangle
 from ..data.square import Square
+from ..gui.popup import PopupWindow
 from janelaviewport import JanelaViewport
 from translation import Translation
 from rotation import Rotation
@@ -17,32 +14,48 @@ from scale import Scale
 
 class Controller:
   """Manages transformations and control objects"""
-  def __init__(self, paintzone):
+  def __init__(self, paintzone, topbar):
     self.drawn_objects = {}                       # Dictionary containing all drawned objects <ide, object>
     self.focused_objects = []                     # List of selected objects
     self.pz = paintzone                           # Paintzone object
     self.op = None                                # Current operation
     self.v_min = None                             # Drawn viewport minimun
     self.v_max = None                             # Drawn viewport maximum
+    self.topbar = topbar                          # Topbar object
+    self.disable_refresh = False                  # Disable Refresh
 
   def call_op_cmd(self, tname, tvalues):
     if tname == 'zoom-ext':
+      self.disable_refresh = False
       self.normalize_window()
-      return
-    T = self._transformation_names[tname]
-    transf = T(*tvalues)
-    for obj in self.focused_objects:
-      transf.apply(obj)
-    self.refresh_min_max(self.focused_objects)
+    elif tname == 'zoom':
+      jv = JanelaViewport(
+           tvalues[0], tvalues[1],
+           self.pz.j_min, self.pz.j_max)
+      jv.apply(self.drawn_objects.values())
+      self.disable_refresh = True
+      self.refresh_min_max(self.drawn_objects.values())
+    else:
+      self.disable_refresh = False
+      T = self._transformation_names[tname]
+      transf = T(*tvalues)
+      for obj in self.focused_objects:
+        transf.apply(obj)
+      self.refresh_min_max(self.focused_objects)
 
   def call_op(self, transformation):
     self.op = transformation
-    if self.focused_objects == [] : return
+    if self.focused_objects == [] :
+      self.instruction("Select objects to apply transformation!")
+      return
     for obj in self.focused_objects:
       self.op.apply(obj)
       self._refresh_min_max(obj.get_points())
       self.pz.logger("> Transformation " + transformation.__name__ + " applied to object " + obj.ide)
-    
+  
+  def instruction(self, message):
+    self.topbar.simple_update(message)
+
   # The following transformations are applied to the focused objects
   # def apply_translation(self):
   #   """Applies a transformation in focused object list"""
@@ -98,6 +111,7 @@ class Controller:
     self.v_max = (xmax, ymax)
     self.v_min = (xmin, ymin)
 
+    if self.disable_refresh : return
     if xmax > self.pz.j_max[0] or ymax > self.pz.j_max[1] or xmin < self.pz.j_min[0] or ymin < self.pz.j_min[1]:
        self.normalize_window()
 

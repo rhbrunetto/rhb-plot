@@ -13,6 +13,7 @@ class AutocompleteEntry(Entry):
     (r'.*create triangle .*', 'create triangle <x1,y1> <x2,y2> <x3,y3>'),
     (r'.*create circle .*', 'create circle <x_center,y_center> radius'),
     (r'.*select .*', 'select <x1,y1> <x2,y2>'),
+    (r'.*zoom .*', 'zoom <x1,y1> <x2,y2>'),
     (r'.*unselect .*', 'unselect <x1,y1> <x2,y2>'),
     (r'.*translate .*', 'translate <x_offset,y_offset>'),
     (r'.*rotate .*', 'rotate angle <x1,y1>'),
@@ -121,6 +122,7 @@ class CommandParser():
                 r'rectangle <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)> <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)>',
                 r'triangle <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)> <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)> <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)>',
                 r'circle <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)> ([+-]?\d+(?:\.\d+)?)']),
+    ('zoom',      [r'<([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)> <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)>']),
     ('select',    [r'<([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)> <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)>']),
     ('unselect',  [r'<([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)> <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)>']),
     ('translate', [r'<([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)>']),
@@ -159,8 +161,11 @@ class CommandParser():
           except:
             self.controller.call_op_cmd(cmd, None)
           return True, "Transformation applied: " + cmd + "!"
+        if cmd == 'zoom':
+          self.controller.call_op_cmd(cmd, self.drawer.create_buffer_point(map(float, val_list)))
+          return True, "Transformation applied: " + cmd + "!"
         return False, "Wrong syntax!!!"
-      return False, "Wrong syntax!!!"
+      # return False, "Wrong syntax!!!"
 
 
 

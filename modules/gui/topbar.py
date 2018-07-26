@@ -12,3 +12,7 @@ class TopBar:
   def update(self, text, foreg, backg):
     self._text.set(text)
     self.label.config(fg=foreg, bg=backg)
+
+  def simple_update(self, text):
+    self._text.set(text)
+    self.label.config(fg=self.config['normal_color'], bg=self.config['background'])

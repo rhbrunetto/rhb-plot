@@ -17,10 +17,10 @@ import os
 # -*- coding: UTF-8 -*-
 
 def init_components(win, menuroot, pz, config):
-  controller = ctrl.Controller(pz)                                                              # Controller to manage objects 
+  tbar = topbar.TopBar(pz.frame, config)
+  controller = ctrl.Controller(pz, tbar)                                                              # Controller to manage objects 
   drawer = drw.Drawer(pz, controller)                                                           # Controller to manage the canvas 
   parser = CommandParser(controller, drawer)
-  tbar = topbar.TopBar(pz.frame, config)
   AutocompleteEntry(parser, tbar, pz.subframe)
   pz.set_drawer(drawer)                                                                         # Set drawer to paintzone to notify clicks
   menubutton.MenuButton(menuroot, 'Line', lambda m=drawer.draw_line: drawer.call_function(m))   # Draw line button

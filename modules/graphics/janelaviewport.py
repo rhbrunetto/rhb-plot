@@ -13,6 +13,7 @@ class JanelaViewport(Transformation):
     self.j_max = j_max    # j_max is the top-right point of window     (xmax, ymax)
     self.v_min = v_min    # v_min is the bottom-left point of viewport (umin, vmin)
     self.v_max = v_max    # v_max is the top-right point of viewport   (umax, vmax)
+
     self.Rw = (j_max[0] - j_min[0])/((j_max[1] - j_min[1]) * 1.0)     # Window Ratio
     self.Rv = (v_max[0] - v_min[0])/((v_max[1] - v_min[1]) * 1.0)     # Viewport Ratio
     self.center_H = self.center_V = 0
