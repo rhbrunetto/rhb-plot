@@ -3,6 +3,7 @@
     "largura" : 800,
     "altura"  : 600,
     "background":"#33353a",
+    "selection":"#DAF7A6",
     "draw_color":"#ffffff"
   },
   "sidebar":{

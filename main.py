@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import sys
 from modules.gui import paintzone
 from modules.gui import sidebar
@@ -31,6 +32,10 @@ def init_components(win, menuroot, pz, config):
   menubutton.MenuButton(menuroot, 'Zoom-Ext', controller.normalize_window)                              # Applies a window-viewport transformation
   menubutton.MenuButton(menuroot, 'Select', lambda m=drawer.select: drawer.call_function(m))       # Draw square button
   menubutton.MenuButton(menuroot, 'Delete', lambda m=drawer.delete: drawer.call_function(m))   # Draw square button
+  menubutton.MenuButton(menuroot, 'Rotate', lambda m='rotate': controller.call_op(m))       # Draw square button
+  menubutton.MenuButton(menuroot, 'Translate', lambda m='translate': controller.call_op(m))       # Draw square button
+  menubutton.MenuButton(menuroot, 'Scale', lambda m='scale': controller.call_op(m))       # Draw square button
+  menubutton.MenuButton(menuroot, 'Zoom', lambda m='zoom': controller.call_op(m))       # Draw square button
   menubutton.MenuButton(menuroot, 'Close', win.stop, side='bottom')                             # Close button
   menubutton.MenuButton(menuroot, 'Clear', drawer.clear_canvas, side='bottom')                  # Clear button
   checkbox.CheckBox(menuroot, 'Keep Drawing', drawer.keep_drawing)                              # Checkbox to keep drawing
@@ -49,7 +54,9 @@ def main(config):
       str(canvas_cfg['background']),
       int(canvas_cfg['altura']),
       int(canvas_cfg['largura']),
-      str(canvas_cfg['draw_color']))
+      str(canvas_cfg['draw_color']),
+      str(canvas_cfg['background']),
+      str(canvas_cfg['selection']))
 
   sb = sidebar.SideBar(
     win.root,

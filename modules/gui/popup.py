@@ -13,3 +13,6 @@ class PopupWindow(object):
     def cleanup(self):
         self.value = self.e.get()
         self.top.destroy()
+
+    def getval(self):
+        return self.value

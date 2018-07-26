@@ -24,17 +24,14 @@ class Controller:
     self.topbar = topbar                          # Topbar object
     self.disable_refresh = False                  # Disable Refresh
 
+# Transformation Handle Functions
+
   def call_op_cmd(self, tname, tvalues):
     if tname == 'zoom-ext':
       self.disable_refresh = False
       self.normalize_window()
     elif tname == 'zoom':
-      jv = JanelaViewport(
-           tvalues[0], tvalues[1],
-           self.pz.j_min, self.pz.j_max)
-      jv.apply(self.drawn_objects.values())
-      self.disable_refresh = True
-      self.refresh_min_max(self.drawn_objects.values())
+      self.zoom(tvalues)
     else:
       self.disable_refresh = False
       T = self._transformation_names[tname]
@@ -43,18 +40,60 @@ class Controller:
         transf.apply(obj)
       self.refresh_min_max(self.focused_objects)
 
+  def zoom(self, tvalues):
+    jv = JanelaViewport(
+          tvalues[0], tvalues[1],
+          self.pz.j_min, self.pz.j_max)
+    jv.apply(self.drawn_objects.values())
+    self.disable_refresh = True
+    self.refresh_min_max(self.drawn_objects.values())
+
   def call_op(self, transformation):
     self.op = transformation
-    if self.focused_objects == [] :
+    if self.focused_objects == [] and not self.op == 'zoom':
       self.instruction("Select objects to apply transformation!")
       return
+    if not self._check_requirements(self.op): return    
+    T = self.get_args()
+    if T == None: return
     for obj in self.focused_objects:
-      self.op.apply(obj)
-      self._refresh_min_max(obj.get_points())
-      self.pz.logger("> Transformation " + transformation.__name__ + " applied to object " + obj.ide)
+      T.apply(obj)
+    self.refresh_min_max(self.focused_objects)
+    self.instruction("Transformation (" + self.op + ") applied!")
   
   def instruction(self, message):
+    """Displays a message on topbar"""
     self.topbar.simple_update(message)
+
+  def cancel(self):
+    """Cancels a function calling"""
+    self.op = None
+
+  def notify(self):
+    """Called when a click is raised on canvas. Checks if some function needs to be called"""
+    if self.op is None : return
+    if self._check_requirements(self.op):
+      self.call_op(self.op)
+  
+  # def _dequeue_calling(self):
+  #   """Calls a function and keep focus if keepmode is enabled"""
+  #   f = self.op
+  #   T = self._transformation_names[tname]
+  #     transf = T(*tvalues)
+  #     for obj in self.focused_objects:
+  #       transf.apply(obj)
+  #     self.refresh_min_max(self.focused_objects)
+  #   f()
+
+  def _check_requirements(self, op):
+    """Checks if focused function has sufficient points to be called"""
+    if len(self.pz.buffer) < self._requirements.get(op): 
+      self.instruction(
+        "This transformation (" + self.op + ") needs " + str(self._requirements.get(op)) + " points (" + 
+        str(self._requirements.get(op) - len(self.pz.buffer)) + " left)"
+      )
+      return False
+    return True
 
   # The following transformations are applied to the focused objects
   # def apply_translation(self):
@@ -65,18 +104,35 @@ class Controller:
   # def init_transformation(self, transformation):
   #     self.op = transformation()
 
+  def delete(self, ides):
+    """Deletes objects from drawn object list and from focused object list"""
+    for single in ides:
+      for w in self.drawn_objects.values():
+        if w.ide == single:
+          del self.drawn_objects[str(w.ide)]
+      for x in self.focused_objects:
+        if x.ide == single:
+          self.focused_objects.remove(x)
+
+
   def select(self, ides, canvas):
     """Sets focus on selected objects"""
     for ide in ides:
       list.append(self.focused_objects, self.drawn_objects[str(ide)])
-      canvas.itemconfig(ide, fill="blue") # change color
+      try:
+        canvas.itemconfig(ide, outline=self.pz.selection_color) # change color
+      except:
+        canvas.itemconfig(ide, fill=self.pz.selection_color) # change color
       self.pz.logger("> Selected object : " + str(ide))
 
   def unselect(self, ides, canvas):
     """Removes focus on selected objects"""
     for ide in ides:
       list.remove(self.focused_objects, self.drawn_objects[str(ide)])
-      canvas.itemconfig(ide, fill="black") # change color
+      try:
+        canvas.itemconfig(ide, outline=self.pz.color) # change color
+      except:
+        canvas.itemconfig(ide, fill=self.pz.color) # change color
       self.pz.logger("> Unselected object : " + str(ide))
 
   def register_object(self, coordinates, ide, objtype, options=None):
@@ -117,6 +173,7 @@ class Controller:
 
   def normalize_window(self):
     """Applies a window-viewport transformation on all drawn objects and refreshes controller viewport coordinates"""
+    if self.drawn_objects == {}: return
     if self.v_max == None or self.v_min == None: return
     deltay = abs(self.v_max[1] - self.v_min[1])
     deltax = abs(self.v_max[0] - self.v_min[0])
@@ -145,9 +202,56 @@ class Controller:
     ('triangle', Triangle)    
   ])
 
-  # Maps an transformation command and its class
+  # Maps a transformation command and its class
   _transformation_names = dict([
     ('translate', Translation),
     ('rotate', Rotation),
     ('scale', Scale),
+    ('zoom', JanelaViewport)
   ])
+
+  # Number of points required to apply an transformation
+  _requirements = dict([
+    ('translate', 0),
+    ('rotate', 1),
+    ('scale', 1),
+    ('zoom', 2)
+  ])
+
+  def get_args(self):
+    if self.op == None: return
+    pts = self._requirements.get(self.op)                   # Get requirements
+
+    if self.op == 'rotate':
+      p = PopupWindow(self.pz.frame,
+                      "Insira o angulo (em graus)")
+      self.pz.frame.wait_window(p.top)
+      p_list = list(sum(self.pz.buffer[:pts],  ()))
+      T = Rotation(float(p.getval()), p_list[0], p_list[1])
+
+    if self.op == 'scale':
+      px = PopupWindow(self.pz.frame,
+                      "Insira um fator para x")
+      self.pz.frame.wait_window(px.top)
+      py = PopupWindow(self.pz.frame,
+                      "Insira um fator para y")
+      self.pz.frame.wait_window(py.top)
+      p_list = list(sum(self.pz.buffer[:pts],  ()))
+      T = Scale(float(px.getval()), float(py.getval()),
+                p_list[0], p_list[1])
+
+    if self.op == 'translate':
+      px = PopupWindow(self.pz.frame,
+                      "Insira um offset para x")
+      self.pz.frame.wait_window(px.top)
+      py = PopupWindow(self.pz.frame,
+                      "Insira um offset para y")
+      self.pz.frame.wait_window(py.top)
+      T = Translation(float(px.getval()), float(py.getval()))
+
+    if self.op == 'zoom':
+      self.zoom(self.pz.buffer[:pts])
+      T = None
+
+    self.pz.buffer = self.pz.buffer[pts:]                     # Remove points of buffer
+    return T

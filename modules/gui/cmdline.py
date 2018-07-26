@@ -13,13 +13,15 @@ class AutocompleteEntry(Entry):
     (r'.*create triangle .*', 'create triangle <x1,y1> <x2,y2> <x3,y3>'),
     (r'.*create circle .*', 'create circle <x_center,y_center> radius'),
     (r'.*select .*', 'select <x1,y1> <x2,y2>'),
-    (r'.*zoom .*', 'zoom <x1,y1> <x2,y2>'),
+    (r'.*select all.*', 'select all'),
     (r'.*unselect .*', 'unselect <x1,y1> <x2,y2>'),
+    (r'.*unselect all.*', 'unselect all'),
+    (r'.*zoom .*', 'zoom <x1,y1> <x2,y2>'),
     (r'.*translate .*', 'translate <x_offset,y_offset>'),
     (r'.*rotate .*', 'rotate angle <x1,y1>'),
     (r'.*scale .*', 'scale sx sy <x1,y1>'),
-    (r'.*clear all .*', 'clear all'),
-    (r'.*zoom-ext .*', 'zoom-ext')])
+    (r'.*clear all.*', 'clear all'),
+    (r'.*zoom-ext.*', 'zoom-ext')])
 
   def __init__(self, parser, topbar, *args, **kwargs):
       Entry.__init__(self, *args, **kwargs)
@@ -123,8 +125,10 @@ class CommandParser():
                 r'triangle <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)> <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)> <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)>',
                 r'circle <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)> ([+-]?\d+(?:\.\d+)?)']),
     ('zoom',      [r'<([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)> <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)>']),
-    ('select',    [r'<([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)> <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)>']),
-    ('unselect',  [r'<([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)> <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)>']),
+    ('select',    [r'<([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)> <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)>',
+                   r'all']),
+    ('unselect',  [r'<([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)> <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)>',
+                   r'all']),
     ('translate', [r'<([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)>']),
     ('rotate',    [r'([+-]?\d+(?:\.\d+)?) <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)>']),
     ('scale',     [r'([+-]?\d+(?:\.\d+)?) ([+-]?\d+(?:\.\d+)?) <([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)>']),
@@ -140,12 +144,15 @@ class CommandParser():
     for exp in expressions:
       values = re.findall(exp, predicate)
       if not values == []:
-        val_list = list(chain.from_iterable(values))
+        if values == ['all']:
+          val_list = [0,0,self.drawer.paintzone.j_max[0], self.drawer.paintzone.j_max[1]]
+        else:
+          val_list = list(chain.from_iterable(values))
         # Call drawer functions
         if cmd == 'create':
           self.drawer.from_cmd_line(exp.split(' ')[0], val_list)
           return True, "Object created!"
-        if cmd == 'select':
+        if cmd == 'select':        
           self.drawer.from_cmd_line(cmd, val_list)
           return True, "Selected objects are in highlight!"
         if cmd == 'unselect':

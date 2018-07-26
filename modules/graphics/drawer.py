@@ -30,13 +30,20 @@ class Drawer:
 
   def notify(self):
     """Called when a click is raised on canvas. Checks if some function needs to be called"""
-    if self.current_function is None : return
+    if self.current_function is None :
+      self.controller.notify()
+      return
     if self._check_requirements(self.current_function):
       self._dequeue_calling()
       
   def _enqueue_calling(self, function):
     """Sets focus to a function"""
     self.current_function = function
+    self.controller.cancel()
+  
+  def cancel(self):
+    """Cancels a function calling"""
+    self.current_function = None
 
   def _dequeue_calling(self):
     """Calls a function and keep focus if keepmode is enabled"""
@@ -87,8 +94,13 @@ class Drawer:
   def draw_rectangle(self):
     """Draws a rectangle"""
     pts = self._requirements.get(self.draw_rectangle.__name__)                      # Get requirements
-    ide = self.paintzone.draw_rectangle(list(sum(self.paintzone.buffer[:pts], ()))) # Draw rectangle on canvas
-    self.controller.register_object(self.paintzone.buffer[:pts], ide, 'rectangle')  # Register object on controller
+    A = self.paintzone.buffer[0]
+    C = self.paintzone.buffer[1]
+    B = (A[0], C[1])
+    D = (C[0], A[1])
+    coords = [A,B,C,D]                             # Remove points of buffer
+    ide = self.paintzone.draw_polygon(list(sum(coords, ()))) # Draw rectangle on canvas
+    self.controller.register_object(coords, ide, 'rectangle')  # Register object on controller
     self.paintzone.buffer = self.paintzone.buffer[pts:]                             # Remove points of buffer
 
 
@@ -141,6 +153,7 @@ class Drawer:
     self.controller.select(                                                        # Get itens on the selected window
       self.paintzone.find_to_me(list(sum(self.paintzone.buffer[:pts], ()))),
       self.paintzone.canvas)
+    self.paintzone.buffer = self.paintzone.buffer[pts:]                         # Remove points of buffer
 
   def unselect(self):
     """Unselect (remove focus on controller) items overlapped by a rectangle"""
@@ -148,12 +161,14 @@ class Drawer:
     self.controller.unselect(                                                      # Get itens on the selected window
       self.paintzone.find_to_me(list(sum(self.paintzone.buffer[:pts], ()))),
       self.paintzone.canvas)
+    self.paintzone.buffer = self.paintzone.buffer[pts:]                         # Remove points of buffer
 
   # def draw_square_bycommandline(self):
   def delete(self):
     """Delete items overlapped by a rectangle"""
     pts = self._requirements.get(self.delete.__name__)                          # Get requirements  
     ids = self.paintzone.find_to_me(list(sum(self.paintzone.buffer[:pts], ()))) # Get itens on the selected window
+    self.controller.delete(ids)
     self.paintzone.delete(ids)
     self.paintzone.buffer = self.paintzone.buffer[pts:]                         # Remove points of buffer
     self.controller.refresh_min_max()
