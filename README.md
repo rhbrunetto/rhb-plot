@@ -14,30 +14,53 @@ Este trabalho visa a construir um editor gráfico 2D com operações e objetos b
   - Reta
   - Círculo
   - Triângulo
-  - Quadrilátero
-- Zoom estendido
+  - Quadrado
+  - Retângulo
+- Zoom estendido (Janela-Viewport)
+- Zoom
+- Seleção
 - Clear
 
 Além disso, funções extras foram inseridas para aprimorar a experiência do usuário.
+
+Além da interação básica com o usuário por cliques na área de desenho, o **rhb-plot** conta com uma interface por linha de comando, onde as funcionalidades podem ser acessadas:
+
+> create line <x,y> <x,y>
+> create rectangle <x,y> <x,y>
+> create square <x,y> r
+> create circle <x.y> r
+> create triangle <x,y> <x,y> <x,y>
+> select <x,y> <x,y>
+> select all
+> unselect <x,y> <x,y>
+> unselect all
+> zoom <x,y> <x,y>
+> zoom-ext
+> load filepath
+
 <!-- TODO: change link -->
-Detalhes de uso podem ser encontrados no [Manual de Uso](main.py).
+<!-- Detalhes de uso podem ser encontrados no [Manual de Uso](main.py). -->
 
 ## Especificações Tecnológicas
 
-Todo o programa foi escrito em `python`, fazendo uso das bibliotecas `Tkinter` e `numpy`. Os conceitos de orientação a objetos foram amplamente utilizados, a fim de prover modularização do código.
+Todo o programa foi escrito em `python` na versão 2.7, fazendo uso das bibliotecas:
+
+- Tkinter (nativo);
+- numpy (`sudo pip install numpy`).
+
+Os conceitos de orientação a objetos foram amplamente utilizados, a fim de prover modularização do código.
+
+## Utilização
 
 Então, basta executar o script `main.py` através do seguinte:
+
 `python main.py`
 
-<!-- TODO: Gerar o .exe -->
-Para Windows, pode-se fazer uso da versão executável:
-`rhb-plot.exe`
-
-<!-- ## Implementação
-
-Alguns detalhes de implementação constam no documento de apresentação, disponível [aqui](slides.pdf). -->
+<!-- Alguns detalhes de implementação constam no documento de apresentação, disponível [aqui](slides.pdf). -->
 
 ### Limitações e Sugestões
+
+Não foi possível cumprir todos os itens inicialmente propostos. Contudo, uma nova versão está em desenvolvimento, por tempo
 
 - Ficaram pendentes as seguintes funcionalidades:
   <!-- - Separar autor e título
