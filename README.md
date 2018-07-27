@@ -27,8 +27,8 @@ Além da interação básica com o usuário por cliques na área de desenho, o *
 
 > create line <x,y> <x,y>
 > create rectangle <x,y> <x,y>
-> create square <x,y> r
-> create circle <x.y> r
+> create square <x,y> [r]
+> create circle <x.y> [r]
 > create triangle <x,y> <x,y> <x,y>
 > select <x,y> <x,y>
 > select all
@@ -36,6 +36,9 @@ Além da interação básica com o usuário por cliques na área de desenho, o *
 > unselect all
 > zoom <x,y> <x,y>
 > zoom-ext
+> translate <dx,dy>
+> scale [dx] [dy] <x,y>
+> rotate [angle] <x,y>
 > load filepath
 
 <!-- TODO: change link -->
