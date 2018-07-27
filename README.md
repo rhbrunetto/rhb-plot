@@ -25,21 +25,23 @@ Além disso, funções extras foram inseridas para aprimorar a experiência do u
 
 Além da interação básica com o usuário por cliques na área de desenho, o **rhb-plot** conta com uma interface por linha de comando, onde as funcionalidades podem ser acessadas:
 
-> create line <x,y> <x,y>
-> create rectangle <x,y> <x,y>
-> create square <x,y> [r]
-> create circle <x.y> [r]
-> create triangle <x,y> <x,y> <x,y>
-> select <x,y> <x,y>
-> select all
-> unselect <x,y> <x,y>
-> unselect all
-> zoom <x,y> <x,y>
-> zoom-ext
-> translate <dx,dy>
-> scale [dx] [dy] <x,y>
-> rotate [angle] <x,y>
-> load filepath
+Comando           | Descrição
+------------------|-----------------
+create line       | Cria uma linha entre os pontos fornecidos
+create rectangle  | Cria um retângulo com diagonal nos pontos fornecidos
+create square     | Cria um quadrado com o ponto superior esquerdo e lado fornecidos
+create circle     | Cria um círculo com centro e raios fornecidos
+create triangle   | Cria um triângulo com os pontos fornecidos
+select            | Seleciona os objetos que interceptam o retângulo fornecido
+unselect          | Deseleciona os objetos que interceptam o retângulo fornecido
+zoom              | Amplia a visualização dos objetos no retângulo fornecido
+zoom-ext          | Adapta e centraliza o conteúdo da área de desenho na área de exibição
+translate         | Translada os objetos selecionados com deslocamentos fornecidos
+scale             | Multiplica a escala dos eixos dos objetos selecionados por fatores fornecidos, dado um ponto de referência
+rotate            | Rotaciona os objetos selecionados em um ângulo fornecido, dado um ponto de referência
+load              | Carrega um arquivo de scripts no formato esperado
+
+- O formato esperado é de um comando por linha.
 
 <!-- TODO: change link -->
 <!-- Detalhes de uso podem ser encontrados no [Manual de Uso](main.py). -->
