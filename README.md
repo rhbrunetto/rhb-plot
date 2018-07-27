@@ -41,10 +41,11 @@ scale             | Multiplica a escala dos eixos dos objetos selecionados por f
 rotate            | Rotaciona os objetos selecionados em um ângulo fornecido, dado um ponto de referência
 load              | Carrega um arquivo de scripts no formato esperado
 
-- O formato esperado é de um comando por linha.
+- O formato esperado é de um comando por linha (Ex: [teste.txt](teste.txt)).
 
 <!-- TODO: change link -->
-<!-- Detalhes de uso podem ser encontrados no [Manual de Uso](main.py). -->
+Detalhes de uso podem ser encontrados no Manual de Uso, que será disponibilizado em breve.
+<!-- [Manual de Uso](main.py). -->
 
 ## Especificações Tecnológicas
 
@@ -61,19 +62,27 @@ Então, basta executar o script `main.py` através do seguinte:
 
 `python main.py`
 
-<!-- Alguns detalhes de implementação constam no documento de apresentação, disponível [aqui](slides.pdf). -->
+Alguns detalhes de implementação constam no documento de apresentação, que estará disponível em breve.
+<!-- [aqui](slides.pdf). -->
 
 ### Limitações e Sugestões
 
-Não foi possível cumprir todos os itens inicialmente propostos. Contudo, uma nova versão está em desenvolvimento, por tempo
+Não foi possível cumprir todos os itens inicialmente propostos. Contudo, uma nova versão está em desenvolvimento
+para contemplar tais pontos e corrigir falhas conhecidas, sem previsão para finalização.
 
 - Ficaram pendentes as seguintes funcionalidades:
-  <!-- - Separar autor e título
-  - Identificar o problema do artigo
-  - Identificar o objetivo do artigo
-  - Identificar a solução proposta no artigo
-  - Interface gráfica -->
-<!-- - Sugere-se aperfeiçoar a forma como os dados estão sendo salvos e refinar as referências bibliográficas. -->
+  - Interação com preview (seleção, rotação, mudança de escala)
+  - Interação com *click and drag* (translação)
+  - Deletar objetos previamente selecionados
+  - Ícones para os menus / Menu em cascata
+  - Aplicar transformações nos objetos por `id`
+    - Mostrar `id` do objeto na tela (atributo `id` já existe)
+  - Alterar cores de desenho
+  - Permitir preencher objetos
+- Para a versão futura já está sendo desenvolvido:
+  - Manual do usuário
+  - Documentação do código
+  - Corrigir rotação do círculo após mudança de escala
 
 ## Licença
 
